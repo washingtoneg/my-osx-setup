@@ -1,0 +1,39 @@
+---
+
+homebrew_packages:
+  - ack
+  - cmake
+  - hub
+  - git
+  - jq
+  - gnu-tar
+  - terminal-notifier
+  - tmux
+  - tree
+  - vim
+  - wget
+
+homebrew_casks:
+  - 1password
+  - adium
+  - dropbox
+  - google-chrome
+  - gpg
+  - gpg-suite
+  - iterm2
+  - slack
+  - spotify
+  - tunnelblick
+  - vagrant
+  - virtualbox
+
+# Use Homebrew's pip install location
+pip_executable: /usr/local/opt/python/libexec/bin/pip
+pip_packages:
+  - ipdb
+
+downloaded_packages:
+  - name: scrollreverser
+    source: https://pilotmoon.com/downloads/ScrollReverser-1.7.6.zip
+  - name: sizeup
+    source: http://www.irradiatedsoftware.com/downloads/SizeUp.zip

@@ -1,0 +1,23 @@
+#!/usr/bin/env python
+
+import json, os, subprocess
+
+# Set the appropriate Python interpreter for localhost
+# (use Homebrew's Python installation location)
+python_interpreter = '/usr/local/opt/python/libexec/bin/python'
+
+def get_sshconfig():
+    hosts = { '_meta': { 'hostvars': {} } }
+
+    localhost = {
+        'hosts': ['localhost'],
+        'vars': { 'ansible_connection': 'local'}
+    }
+
+    hosts['my-computer'] = localhost
+
+    hosts['_meta']['hostvars']['localhost'] = { 'ansible_python_interpreter': python_interpreter }
+
+    return hosts
+
+print(json.dumps(get_sshconfig()));
