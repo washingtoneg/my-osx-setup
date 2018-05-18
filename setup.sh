@@ -127,6 +127,12 @@ EOF
 }
 
 create_ssh_key() {
+  if [[ "$SSH_KEY_EMAIL" == 'unset' ]]; then
+    select_prompt ssh_key_email
+  else
+    info "SSH_KEY_EMAIL set to: $SSH_KEY_EMAIL from environment."
+  fi
+
   info "Generating SSH key for $SSH_KEY_EMAIL at ${SSH_KEY_FILE}..."
   select_prompt ssh_key_password
 
@@ -230,12 +236,6 @@ prompt_user_for_initial_input() {
     select_prompt github_email
   else
     info "GITHUB_EMAIL set to: $GITHUB_EMAIL from environment."
-  fi
-
-  if [[ "$SSH_KEY_EMAIL" == 'unset' ]]; then
-    select_prompt ssh_key_email
-  else
-    info "SSH_KEY_EMAIL set to: $SSH_KEY_EMAIL from environment."
   fi
 
   if [[ "$COMPUTER_ALIAS" == 'unset' ]]; then
