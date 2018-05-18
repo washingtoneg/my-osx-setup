@@ -195,13 +195,22 @@ github_api() {
 }
 
 install_homebrew() {
-  # Check for Homebrew, install if we don't have it
+  info "Checking for Homebrew, and installing if necessary"
   if test ! $(which brew); then
     info 'Installing homebrew...'
     ruby -e "$(curl -fsSL $HOMEBREW_DOWNLOAD_URL)" | stream_info
   else
     info 'Homebrew installed.'
   fi
+}
+
+install_ansible_dependencies() {
+  info "Installing Ansible dependencies if necessary..."
+  local ansible_dependencies=(python ansible)
+
+  for dependency in  ${ansible_dependencies[*]}; do
+    brew install $dependency || brew upgrade $dependency | stream_info
+  done
 }
 
 local_ssh_key_content() {
@@ -345,8 +354,7 @@ main() {
   create_user_paths
   clone_repos_from_github
   install_homebrew
-  brew install python | stream_info
-  brew install ansible | stream_info
+  install_ansible_dependencies
   run_ansible
 }
 
