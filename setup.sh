@@ -7,19 +7,13 @@ readonly NAME_OF_CALLING_SCRIPT=$(basename "$0")
 # Variables for internal script usage
 AUTHOR_USERNAME=washingtoneg
 BASH_UTILS="$(mktemp /tmp/bash_util_XXXXX)" || exit 1
-COMMIT_ID=778f70675c2f3c1b8c975094400745c800f21a56
-CONTENT_URL_BASE=https://gist.githubusercontent.com
+CONTENT_URL=https://raw.githubusercontent.com/washingtoneg/my-osx-setup/master/bash_utils.sh
 DIRECTORY=$(pwd)
 GITHUB_API_URL=https://api.github.com
 GITHUB_KEYS=''
-GITHUB_GIST_ID=6dfc7440fab5d99dc09b762d6403001d
 HOMEBREW_DOWNLOAD_URL=https://raw.githubusercontent.com/Homebrew/install/master/install
 SSH_CONFIG="$(mktemp /tmp/ssh_config_XXXXX)" || exit 1
 SCRIPT_NAME=bash_utils.sh
-
-# Variables for internal script usage (order dependent)
-FILE_URI="${GITHUB_GIST_ID}/raw/${COMMIT_ID}/${SCRIPT_NAME}"
-CONTENT_URL="$CONTENT_URL_BASE/$AUTHOR_USERNAME/$FILE_URI"
 
 # User-defined variables (set by environment variables)
 COMPUTER_ALIAS=${COMPUTER_ALIAS:-unset}
