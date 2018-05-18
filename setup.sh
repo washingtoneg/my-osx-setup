@@ -73,6 +73,30 @@ check_ssh_key_exists_in_github() {
   fi
 }
 
+cleanup() {
+  rm "$BASH_UTILS"
+  rm "$SSH_CONFIG"
+  cd $DIRECTORY &>/dev/null
+}
+
+clone_repos_from_github() {
+  local repos=(dotfiles my-osx-setup)
+
+  info "Cloning git repos to $WORKSPACE_PATH if they don't exist..."
+  for repo in ${repos[*]}; do
+  local repo_path="${WORKSPACE_PATH}/${repo}"
+
+    if ! [[ -d "$repo_path" ]]; then
+      warn "Cloning the $repo repo to ${repo_path}..."
+      git clone https://github.com/washingtoneg/$repo.git $repo_path | stream_warn
+      pushd $repo_path
+        warn "Setting the origin remote URL in $repo_path to use th git protocol"
+        git remote set-url origin "git@github.com:${GITHUB_USERNAME}/${repo}.git"
+      popd
+    fi
+  done
+}
+
 compare_ssh_keys() {
   local key_match=''
 
@@ -100,19 +124,6 @@ check_if_label_used_for_different_key() {
 
   if ! [[ -z "$id" ]]; then
     delete_ssh_key_from_github $id
-  fi
-}
-
-create_user_paths() {
-  info "Creating \$scratch and \$work directories if they don't exist..."
-  if ! [[ -d "$WORKSPACE_PATH" ]]; then
-    warn "WORKSPACE_PATH $WORKSPACE_PATH does not exist. Creating directory..."
-    debug $(mkdir "$WORKSPACE_PATH")
-  fi
-
-  if ! [[ -d "$SCRATCH_PATH" ]]; then
-    warn "SCRATCH_PATH $SCRATCH_PATH does not exist. Creating directory..."
-    debug $(mkdir "$SCRATCH_PATH")
   fi
 }
 
@@ -148,28 +159,17 @@ create_ssh_key() {
   compare_ssh_keys
 }
 
-cleanup() {
-  rm "$BASH_UTILS"
-  rm "$SSH_CONFIG"
-  cd $DIRECTORY &>/dev/null
-}
+create_user_paths() {
+  info "Creating \$scratch and \$work directories if they don't exist..."
+  if ! [[ -d "$WORKSPACE_PATH" ]]; then
+    warn "WORKSPACE_PATH $WORKSPACE_PATH does not exist. Creating directory..."
+    debug $(mkdir "$WORKSPACE_PATH")
+  fi
 
-clone_repos_from_github() {
-  local repos=(dotfiles my-osx-setup)
-
-  info "Cloning git repos to $WORKSPACE_PATH if they don't exist..."
-  for repo in ${repos[*]}; do
-  local repo_path="${WORKSPACE_PATH}/${repo}"
-
-    if ! [[ -d "$repo_path" ]]; then
-      warn "Cloning the $repo repo to ${repo_path}..."
-      git clone https://github.com/washingtoneg/$repo.git $repo_path | stream_warn
-      pushd $repo_path
-        warn "Setting the origin remote URL in $repo_path to use th git protocol"
-        git remote set-url origin "git@github.com:${GITHUB_USERNAME}/${repo}.git"
-      popd
-    fi
-  done
+  if ! [[ -d "$SCRATCH_PATH" ]]; then
+    warn "SCRATCH_PATH $SCRATCH_PATH does not exist. Creating directory..."
+    debug $(mkdir "$SCRATCH_PATH")
+  fi
 }
 
 delete_ssh_key_from_github() {
