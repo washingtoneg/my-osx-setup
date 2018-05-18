@@ -89,10 +89,10 @@ clone_repos_from_github() {
     if ! [[ -d "$repo_path" ]]; then
       warn "Cloning the $repo repo to ${repo_path}..."
       git clone https://github.com/washingtoneg/$repo.git $repo_path | stream_warn
-      pushd $repo_path
+      pushd $repo_path &>/dev/null
         warn "Setting the origin remote URL in $repo_path to use th git protocol"
         git remote set-url origin "git@github.com:${GITHUB_USERNAME}/${repo}.git"
-      popd
+      popd &>/dev/null
     fi
   done
 }
@@ -331,6 +331,23 @@ start_ssh_agent() {
   echo "$(ssh-add -l)" | stream_debug 
 }
 
+symlink_dotfiles() {
+  pushd "${WORKSPACE_PATH}/dotfiles" &>/dev/null
+    local my_dotfiles="$(ls -d .[^.*]* | grep -v '^.git$\|^.gitignore$')"
+    local dotfile=''
+
+    info "Symlinking the following dotfiles to HOME directory:"
+    info "$(echo $my_dotfiles)"
+ 
+    for dotfile in ${my_dotfiles[*]}; do
+      if ! [[ -L "${HOME}/${dotfile}" ]]; then
+        warn "Symlinking ${WORKSPACE_PATH}/dotfiles/${dotfile} to ${HOME}/${dotfile}"
+        ln -fns "${WORKSPACE_PATH}/dotfiles/${dotfile}" "${HOME}/${dotfile}"
+      fi
+    done
+  popd
+}
+
 trap_signals() {
   trap "{ debug 'Running cleanup'; cleanup; }" EXIT
   trap "{ debug 'Running cleanup'; cleanup; fatal 'User interrupt detected. Exitting...'; }" SIGINT
@@ -338,7 +355,7 @@ trap_signals() {
 
 run_ansible() {
   info "Running ansible to continue with local setup..."
-  pushd "${WORKSPACE_PATH}/my-osx-setup/ansible"
+  pushd "${WORKSPACE_PATH}/my-osx-setup/ansible" &>/dev/null
     exec ansible-playbook playbooks/darwin_bootstrap.yml -v
   popd
 }
@@ -353,6 +370,7 @@ main() {
   create_ssh_config_file
   create_user_paths
   clone_repos_from_github
+  symlink_dotfiles
   install_homebrew
   install_ansible_dependencies
   run_ansible
