@@ -3,10 +3,10 @@
 homebrew_packages:
   - ack
   - cmake
-  - hub
   - git
-  - jq
   - gnu-tar
+  - hub
+  - jq
   - terminal-notifier
   - tmux
   - tree
