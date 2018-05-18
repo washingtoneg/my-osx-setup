@@ -318,6 +318,14 @@ select_prompt() {
   fi
 }
 
+set_git_aliases() {
+  info "Setting git user.name to $GITHUB_USERNAME"
+  git config --global user.name "$GITHUB_USERNAME"
+
+  info "Setting git user.email to $GITHUB_EMAIL"
+  git config --global user.email "$GITHUB_EMAIL"
+}
+
 start_ssh_agent() {
   info 'Starting the ssh-agent in the background'
   eval "$(ssh-agent -s)" | stream_info
@@ -328,7 +336,7 @@ start_ssh_agent() {
   info "Adding the $SSH_KEY_EMAIL identity to the ssh-agent"
   ssh-add -K $SSH_KEY_FILE | stream_info
 
-  echo "$(ssh-add -l)" | stream_debug 
+  echo "$(ssh-add -l)" | stream_debug
 }
 
 symlink_dotfiles() {
@@ -338,7 +346,7 @@ symlink_dotfiles() {
 
     info "Symlinking the following dotfiles to HOME directory:"
     info "$(echo $my_dotfiles)"
- 
+
     for dotfile in ${my_dotfiles[*]}; do
       if ! [[ -L "${HOME}/${dotfile}" ]]; then
         warn "Symlinking ${WORKSPACE_PATH}/dotfiles/${dotfile} to ${HOME}/${dotfile}"
@@ -371,6 +379,7 @@ main() {
   create_user_paths
   clone_repos_from_github
   symlink_dotfiles
+  set_git_aliases
   install_homebrew
   install_ansible_dependencies
   run_ansible
