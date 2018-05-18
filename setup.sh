@@ -333,8 +333,11 @@ trap_signals() {
   trap "{ debug 'Running cleanup'; cleanup; fatal 'User interrupt detected. Exitting...'; }" SIGINT
 }
 
-set_git_aliases() {
-  :
+run_ansible() {
+  info "Running ansible to continue with local setup..."
+  pushd "${WORKSPACE_PATH}/my-osx-setup/ansible"
+    exec ansible-playbook playbooks/darwin_bootstrap.yml -v
+  popd
 }
 
 main() {
@@ -347,16 +350,10 @@ main() {
   create_ssh_config_file
   create_user_paths
   clone_repos_from_github
-  # clone_dotfiles
-
-  # git clone my-osx-setup
-  # Run git commands to set username and password aliases
-
-  # install_homebrew
-  # brew install python | stream_info
-  # brew install ansible | stream_info
-  # cd ansible &>/dev/null
-  # exec ansible-playbook playbooks/darwin_bootstrap.yml -v
+  install_homebrew
+  brew install python | stream_info
+  brew install ansible | stream_info
+  run_ansible
 }
 
 main
