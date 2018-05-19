@@ -6,14 +6,14 @@ readonly NAME_OF_CALLING_SCRIPT=$(basename "$0")
 
 # Variables for internal script usage
 AUTHOR_USERNAME=washingtoneg
-BASH_UTILS="$(mktemp /tmp/bash_util_XXXXX)" || exit 1
-CONTENT_URL=https://raw.githubusercontent.com/washingtoneg/my-osx-setup/master/bash_utils.sh
+BASH_UTILS_URL="https://raw.githubusercontent.com/${AUTHOR_USERNAME}/my-osx-setup/master/bash_utils.sh"
 DIRECTORY=$(pwd)
 GITHUB_API_URL=https://api.github.com
-GITHUB_KEYS=''
+GITHUB_SSH_KEYS=''
 HOMEBREW_DOWNLOAD_URL=https://raw.githubusercontent.com/Homebrew/install/master/install
-SSH_CONFIG="$(mktemp /tmp/ssh_config_XXXXX)" || exit 1
+LOCAL_BASH_UTILS="$(mktemp /tmp/bash_util_XXXXX)" || exit 1
 SCRIPT_NAME=bash_utils.sh
+SSH_CONFIG="$(mktemp /tmp/ssh_config_XXXXX)" || exit 1
 
 # User-defined variables (set by environment variables)
 COMPUTER_ALIAS=${COMPUTER_ALIAS:-unset}
@@ -22,9 +22,8 @@ GITHUB_EMAIL=${GITHUB_EMAIL:-unset}
 GITHUB_USERNAME=${GITHUB_USERNAME:-unset}
 SCRATCH_PATH=${SCRATCH_PATH:-unset}
 SSH_KEY_EMAIL=${SSH_KEY_EMAIL:-unset}
-SSH_KEY_PASSWORD=${SSH_KEY_PASSWORD:-unset}
 SSH_KEY_FILE=${SSH_KEY_FILE:-~/.ssh/id_rsa_github}
-SSH_KEY_TITLE="${GITHUB_USERNAME}@${COMPUTER_ALIAS}"
+SSH_KEY_PASSWORD=${SSH_KEY_PASSWORD:-unset}
 WORKSPACE_PATH=${WORKSPACE_PATH:-unset}
 
 add_ssh_key_to_github() {
@@ -62,10 +61,10 @@ check_ssh_key_exists_locally() {
 
 check_ssh_key_exists_in_github() {
   info 'Checking GitHub for existing SSH keys...'
-  GITHUB_KEYS=$(github_api GET 'user/keys')
-  debug "Existing keys: $(echo $GITHUB_KEYS)"
+  GITHUB_SSH_KEYS=$(github_api GET 'user/keys')
+  debug "Existing keys: $(echo $GITHUB_SSH_KEYS)"
 
-  if ! [[ $(echo "$GITHUB_KEYS" | grep "$SSH_KEY_TITLE") ]]; then
+  if ! [[ $(echo "$GITHUB_SSH_KEYS" | grep "$SSH_KEY_TITLE") ]]; then
     info "No SSH keys exist in GitHub for $GITHUB_USERNAME with the title $SSH_KEY_TITLE"
     add_ssh_key_to_github
   else
@@ -74,7 +73,7 @@ check_ssh_key_exists_in_github() {
 }
 
 cleanup() {
-  rm "$BASH_UTILS"
+  rm "$LOCAL_BASH_UTILS"
   rm "$SSH_CONFIG"
   cd $DIRECTORY &>/dev/null
 }
@@ -88,7 +87,7 @@ clone_repos_from_github() {
 
     if ! [[ -d "$repo_path" ]]; then
       warn "Cloning the $repo repo to ${repo_path}..."
-      git clone https://github.com/washingtoneg/$repo.git $repo_path | stream_warn
+      git clone "https://github.com/${AUTHOR_USERNAME}/${repo}.git" $repo_path | stream_warn
       pushd $repo_path &>/dev/null
         warn "Setting the origin remote URL in $repo_path to use th git protocol"
         git remote set-url origin "git@github.com:${GITHUB_USERNAME}/${repo}.git"
@@ -103,11 +102,10 @@ compare_ssh_keys() {
   info "Comparing $SSH_KEY_FILE contents with $SSH_KEY_TITLE contents in GitHub..."
   debug "Local SSH Key content: $(local_ssh_key_content)"
 
-  key_match=$(echo "$GITHUB_KEYS" | grep "$(local_ssh_key_content)" || true)
+  key_match=$(echo "$GITHUB_SSH_KEYS" | grep "$(local_ssh_key_content)" || true)
   debug "Matching $SSH_KEY_FILE content with keys in GitHub: $key_match"
 
   if ! [[ -z "$key_match" ]]; then
-    id=$(parse_github_ssh_key_json "$GITHUB_KEYS" "$SSH_KEY_TITLE")
     info "$SSH_KEY_FILE contents match SSH key with id=$id in GitHub"
   else
     info "$SSH_KEY_FILE contents do not match $SSH_KEY_TITLE in GitHub"
@@ -118,8 +116,8 @@ compare_ssh_keys() {
 }
 
 check_if_label_used_for_different_key() {
-  info "Checking to see if key with label $SSH_KEY_TITLE exists in GitHub..."
-  id=$(parse_github_ssh_key_json "$GITHUB_KEYS" "$SSH_KEY_TITLE")
+  info "Checking to see if an SSH key with label $SSH_KEY_TITLE exists in GitHub..."
+  id=$(parse_github_ssh_key_json "$GITHUB_SSH_KEYS" "$SSH_KEY_TITLE")
   debug "GitHub SSH key id for key matching label $SSH_KEY_TITLE): $id"
 
   if ! [[ -z "$id" ]]; then
@@ -179,8 +177,8 @@ delete_ssh_key_from_github() {
 }
 
 get_bash_utils() {
-  curl --silent "$CONTENT_URL" > $BASH_UTILS
-  source $BASH_UTILS
+  curl --silent "$BASH_UTILS_URL" > $LOCAL_BASH_UTILS
+  source $LOCAL_BASH_UTILS
 }
 
 github_api() {
@@ -228,27 +226,15 @@ parse_github_ssh_key_json() {
 json_obj = json.load(sys.stdin);
 ssh_key_title = os.environ.get("SSH_KEY_TITLE");
 print (item["id"] for item in json_obj if item["title"] == ssh_key_title).next()
-
 '
   )
   echo $value
 }
 
 prompt_user_for_initial_input() {
-  if [[ "$GITHUB_USERNAME" == 'unset' ]]; then
-    select_prompt github_username
-  else
-    info "GITHUB_USERNAME set to: $GITHUB_USERNAME from environment."
-  fi
-
-  if [[ "$GITHUB_EMAIL" == 'unset' ]]; then
-    select_prompt github_email
-  else
-    info "GITHUB_EMAIL set to: $GITHUB_EMAIL from environment."
-  fi
-
   if [[ "$COMPUTER_ALIAS" == 'unset' ]]; then
     select_prompt computer_alias
+    SSH_KEY_TITLE="${GITHUB_USERNAME}@${COMPUTER_ALIAS}"
   else
     info "COMPUTER_ALIAS set to: $COMPUTER_ALIAS from environment."
   fi
@@ -319,11 +305,27 @@ select_prompt() {
 }
 
 set_git_aliases() {
-  info "Setting git user.name to $GITHUB_USERNAME"
-  git config --global user.name "$GITHUB_USERNAME"
+  if [[ "$GITHUB_USERNAME" == 'unset' ]]; then
+    select_prompt github_username
+  else
+    info "GITHUB_USERNAME set to: $GITHUB_USERNAME from environment."
+  fi
 
-  info "Setting git user.email to $GITHUB_EMAIL"
-  git config --global user.email "$GITHUB_EMAIL"
+  if [[ "$GITHUB_EMAIL" == 'unset' ]]; then
+    select_prompt github_email
+  else
+    info "GITHUB_EMAIL set to: $GITHUB_EMAIL from environment."
+  fi
+
+  if [[ $(git config --global user.name) != $GITHUB_USERNAME ]]; then
+    warn "Setting git user.name to $GITHUB_USERNAME"
+    git config --global user.name "$GITHUB_USERNAME"
+  fi
+
+  if [[ $(git config --global user.email) != $GITHUB_EMAIL ]]; then
+    warn "Setting git user.email to $GITHUB_EMAIL"
+    git config --global user.email "$GITHUB_EMAIL"
+  fi
 }
 
 start_ssh_agent() {
