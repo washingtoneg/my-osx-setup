@@ -1,13 +1,19 @@
 ---
 # tasks file for darwin_bootstrap
 
+- name: Create needed directories
+  file:
+    name: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ directories }}"
+
 - name: Install Homebrew packages
   homebrew:
     name: "{{ item }}"
     state: present
     update_homebrew: yes
   with_items: "{{ homebrew_packages }}"
-
 
 - name: Install Homebrew casks
   homebrew_cask:
@@ -16,18 +22,50 @@
     update_homebrew: yes
   with_items: "{{ homebrew_casks }}"
 
-
 - name: Install pip packages
   pip:
     name: "{{ item }}"
     state: present
-    executable: "{{ pip_executable }}"
-  with_items: "{{ pip_packages }}"
-  
-- name: Download and unarchive 
+    executable: "{{ pip.executable }}"
+  with_items: "{{ pip.packages }}"
+
+- name: Install pip2.7 packages
+  pip:
+    name: "{{ item }}"
+    state: present
+    executable: "{{ pip2_7.executable }}"
+  with_items: "{{ pip2_7.packages }}"
+  tags: gcalcli
+
+- name: Download and unarchive
   unarchive:
     src: "{{ item.source }}"
-    dest: ~/Applications
+    dest: "{{ item.destination }}"
     remote_src: yes
   with_items: "{{ downloaded_packages }}"
-  tags: foo
+
+- name: Checkout git repos
+  git:
+    repo: "{{ item.url }}"
+    dest: "$scratch/{{ item.name }}"
+    version: "{{ item.version }}"
+    force: "{{ item.force }}"
+  tags: gcalcli
+  with_items: "{{ git_repos }}"
+
+- name: Remove all crap from Dock
+  shell: dockutil --remove "{{ item }}"
+  ignore_errors: true
+  with_items: "{{ dockitems_to_remove }}"
+
+- name: Check if items in dock exist
+  shell: dockutil --find "{{ item.name }}" || dockutil --add "{{ item.path }}"
+  with_items: "{{ dockitems_to_persist }}"
+
+- name: Fix order
+  shell: dockutil --move "{{ item.name }}" --position "{{ item.pos }}"
+  with_items: "{{ dockitems_to_persist }}"
+
+- name: Include gcalcli-related tasks
+  include: gcalcli.yml
+  tags: gcalcli

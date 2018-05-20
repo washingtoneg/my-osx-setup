@@ -136,12 +136,6 @@ EOF
 }
 
 create_ssh_key() {
-  if [[ "$SSH_KEY_EMAIL" == 'unset' ]]; then
-    select_prompt ssh_key_email
-  else
-    info "SSH_KEY_EMAIL set to: $SSH_KEY_EMAIL from environment."
-  fi
-
   info "Generating SSH key for $SSH_KEY_EMAIL at ${SSH_KEY_FILE}..."
   select_prompt ssh_key_password
 
@@ -232,6 +226,12 @@ print (item["id"] for item in json_obj if item["title"] == ssh_key_title).next()
 }
 
 prompt_user_for_initial_input() {
+  if [[ "$SSH_KEY_EMAIL" == 'unset' ]]; then
+    select_prompt ssh_key_email
+  else
+    info "SSH_KEY_EMAIL set to: $SSH_KEY_EMAIL from environment."
+  fi
+
   if [[ "$COMPUTER_ALIAS" == 'unset' ]]; then
     select_prompt computer_alias
     SSH_KEY_TITLE="${GITHUB_USERNAME}@${COMPUTER_ALIAS}"
@@ -366,7 +366,7 @@ trap_signals() {
 run_ansible() {
   info "Running ansible to continue with local setup..."
   pushd "${WORKSPACE_PATH}/my-osx-setup/ansible" &>/dev/null
-    exec ansible-playbook playbooks/darwin_bootstrap.yml -v
+    exec ansible-playbook playbooks/darwin_bootstrap.yml -v -e SSH_KEY_EMAIL="$SSH_KEY_EMAIL"
   popd
 }
 
