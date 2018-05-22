@@ -6,7 +6,9 @@ directories:
 homebrew_packages:
   - ack
   - bash-completion
+  - bash-git-prompt
   - cmake
+  - docker
   - dockutil
   - fortune
   - git
