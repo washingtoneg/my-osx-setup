@@ -81,9 +81,9 @@ cleanup() {
 clone_repos_from_github() {
   local repos=(dotfiles my-osx-setup)
 
-  info "Cloning git repos to $WORKSPACE_PATH if they don't exist..."
+  info "Cloning git repos to $SCRATCH_PATH if they don't exist..."
   for repo in ${repos[*]}; do
-  local repo_path="${WORKSPACE_PATH}/${repo}"
+  local repo_path="${SCRATCH_PATH}/${repo}"
 
     if ! [[ -d "$repo_path" ]]; then
       warn "Cloning the $repo repo to ${repo_path}..."
@@ -342,8 +342,8 @@ start_ssh_agent() {
 }
 
 symlink_dotfiles() {
-  pushd "${WORKSPACE_PATH}/dotfiles" &>/dev/null
-    local my_dotfiles="$(ls -d .[^.*]* | grep -v '^.git$\|^.gitignore$')"
+  pushd "${SCRATCH_PATH}/dotfiles" &>/dev/null
+    local my_dotfiles="$(ls -d .[^.*]* | grep -v '.git\b\|.gitignore\b')"
     local dotfile=''
 
     info "Symlinking the following dotfiles to HOME directory:"
@@ -351,8 +351,8 @@ symlink_dotfiles() {
 
     for dotfile in ${my_dotfiles[*]}; do
       if ! [[ -L "${HOME}/${dotfile}" ]]; then
-        warn "Symlinking ${WORKSPACE_PATH}/dotfiles/${dotfile} to ${HOME}/${dotfile}"
-        ln -fns "${WORKSPACE_PATH}/dotfiles/${dotfile}" "${HOME}/${dotfile}"
+        warn "Symlinking ${SCRATCH_PATH}/dotfiles/${dotfile} to ${HOME}/${dotfile}"
+        ln -fns "${SCRATCH_PATH}/dotfiles/${dotfile}" "${HOME}/${dotfile}"
       fi
     done
   popd
@@ -365,7 +365,7 @@ trap_signals() {
 
 run_ansible() {
   info "Running ansible to continue with local setup..."
-  pushd "${WORKSPACE_PATH}/my-osx-setup/ansible" &>/dev/null
+  pushd "${SCRATCH_PATH}/my-osx-setup/ansible" &>/dev/null
     exec ansible-playbook playbooks/darwin_bootstrap.yml -v -e SSH_KEY_EMAIL="$SSH_KEY_EMAIL"
   popd
 }
