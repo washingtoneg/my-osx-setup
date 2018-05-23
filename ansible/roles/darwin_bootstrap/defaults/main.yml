@@ -16,6 +16,7 @@ homebrew_packages:
   - hub
   - jq
   - terminal-notifier
+  - terminal-parrot
   - tmux
   - tree
   - shpotify
@@ -36,6 +37,9 @@ homebrew_casks:
   - tunnelblick
   - vagrant
   - virtualbox
+
+homebrew_taps:
+  - jmhobbs/parrot
 
 # Use Homebrew's pip install location
 pip:
