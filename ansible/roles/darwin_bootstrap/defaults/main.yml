@@ -42,6 +42,8 @@ pip:
   executable: /usr/local/opt/python/libexec/bin/pip
   packages:
     - ipdb
+    - awscli
+
 
 pip2_7:
   executable: /usr/local/bin/pip2.7
