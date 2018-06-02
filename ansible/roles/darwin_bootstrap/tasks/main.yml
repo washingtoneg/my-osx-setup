@@ -53,7 +53,7 @@
 - name: Checkout git repos
   git:
     repo: "{{ item.url }}"
-    dest: "$scratch/{{ item.name }}"
+    dest: "{{ item.dest }}"
     version: "{{ item.version }}"
     force: "{{ item.force }}"
   tags: gcalcli

@@ -1,6 +1,7 @@
 ---
 
 directories:
+  - ~/.tmux/plugins/tpm
   - ~/.vim/pack/tml/start/tcomment
 
 homebrew_packages:
@@ -58,7 +59,14 @@ git_repos:
   -
     name: gcalcli
     url: https://github.com/insanum/gcalcli.git
+    dest: $scratch/gcalcli
     version: v3.4.0
+    force: yes
+  -
+    name: tpm
+    url: https://github.com/tmux-plugins/tpm
+    dest: ~/.tmux/plugins/tpm
+    version: v3.0.0
     force: yes
 
 downloaded_packages:
