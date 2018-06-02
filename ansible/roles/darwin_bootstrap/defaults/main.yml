@@ -3,6 +3,7 @@
 directories:
   - ~/.tmux/plugins/tpm
   - ~/.vim/pack/tml/start/tcomment
+  - ~/.vim/syntax
 
 homebrew_packages:
   - ack
@@ -69,7 +70,12 @@ git_repos:
     version: v3.0.0
     force: yes
 
-downloaded_packages:
+packages_to_download:
+  - name: fountain.vim
+    url: https://www.vim.org/scripts/download_script.php?src_id=17497
+    destination: ~/.vim/syntax
+
+archives_to_download:
   - name: scrollreverser
     source: https://pilotmoon.com/downloads/ScrollReverser-1.7.6.zip
     destination: ~/Applications

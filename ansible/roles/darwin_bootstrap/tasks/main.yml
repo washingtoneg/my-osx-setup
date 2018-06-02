@@ -43,12 +43,18 @@
   with_items: "{{ pip2_7.packages }}"
   tags: gcalcli
 
-- name: Download and unarchive
+- name: Download packages
+  get_url:
+    url: "{{ item.url }}"
+    dest: "{{ item.destination }}"
+  with_items: "{{ packages_to_download }}"
+
+- name: Download and unarchive packages
   unarchive:
     src: "{{ item.source }}"
     dest: "{{ item.destination }}"
     remote_src: yes
-  with_items: "{{ downloaded_packages }}"
+  with_items: "{{ archives_to_download }}"
 
 - name: Checkout git repos
   git:
