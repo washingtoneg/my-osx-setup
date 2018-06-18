@@ -14,9 +14,11 @@ homebrew_packages:
   - dockutil
   - fortune
   - git
+  - git-lfs
   - gnu-tar
   - hub
   - jq
+  - telnet
   - terminal-notifier
   - terminal-parrot
   - tmux
@@ -43,12 +45,13 @@ homebrew_casks:
 homebrew_taps:
   - jmhobbs/parrot
 
-# Use Homebrew's pip install location
 pip:
+  # Use Homebrew's pip install location
   executable: /usr/local/opt/python/libexec/bin/pip
   packages:
-    - ipdb
     - awscli
+    - markdown-editor
+    - ipdb
 
 
 pip2_7:
