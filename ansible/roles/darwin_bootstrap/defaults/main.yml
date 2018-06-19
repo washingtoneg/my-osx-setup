@@ -23,6 +23,7 @@ homebrew_packages:
   - terminal-parrot
   - tmux
   - tree
+  - rbenv
   - shpotify
   - vim
   - wget
