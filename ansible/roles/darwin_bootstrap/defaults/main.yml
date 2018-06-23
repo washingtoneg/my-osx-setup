@@ -70,6 +70,12 @@ git_repos:
     version: v3.4.0
     force: yes
   -
+    name: origami
+    url: https://github.com/robbykraft/Origami.git
+    dest: $scratch/origami
+    version: master
+    force: yes
+  -
     name: tpm
     url: https://github.com/tmux-plugins/tpm
     dest: ~/.tmux/plugins/tpm
