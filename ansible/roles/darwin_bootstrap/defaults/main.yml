@@ -18,6 +18,7 @@ homebrew_packages:
   - gnu-tar
   - hub
   - jq
+  - reattach-to-user-namespace
   - telnet
   - terminal-notifier
   - terminal-parrot
@@ -33,6 +34,7 @@ homebrew_casks:
   - adium
   - dropbox
   - firefox
+  - flycut
   - google-chrome
   - gpg
   - gpg-suite
