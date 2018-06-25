@@ -97,24 +97,25 @@ archives_to_download:
     destination: ~/.vim/pack/tml/start/tcomment
 
 dockitems_to_remove:
+  - Adium
+  - App Store
+  - Calendar
+  - Contacts
+  - FaceTime
+  - Keynote
   - Launchpad
   - Mail
-  - Safari
-  - Contacts
-  - Notes
-  - Pages
-  - Numbers
-  - Keynote
-  - Reminders
   - Maps
-  - Photos
   - Messages
-  - FaceTime
-  - iTunes
-  - iBooks
-  - App Store
+  - Notes
+  - Numbers
+  - Pages
+  - Photos
+  - Reminders
+  - Safari
   - System Preferences
-  - Calendar
+  - iBooks
+  - iTunes
 
 dockitems_to_persist:
   - name: Google Chrome
@@ -135,6 +136,3 @@ dockitems_to_persist:
   - name: Spotify
     path: /Applications/Spotify.app
     pos: 6
-  - name: Adium
-    path: /Applications/Adium.app
-    pos: 7
