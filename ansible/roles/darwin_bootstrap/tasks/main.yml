@@ -11,7 +11,7 @@
 - name: Install Homebrew casks
   homebrew_cask:
     name: "{{ item }}"
-    state: present
+    state: latest
     update_homebrew: yes
   with_items: "{{ homebrew_casks }}"
 
@@ -24,21 +24,21 @@
 - name: Install Homebrew packages
   homebrew:
     name: "{{ item }}"
-    state: present
+    state: latest
     update_homebrew: yes
   with_items: "{{ homebrew_packages }}"
 
 - name: Install pip packages
   pip:
     name: "{{ item }}"
-    state: present
+    state: latest
     executable: "{{ pip.executable }}"
   with_items: "{{ pip.packages }}"
 
 - name: Install pip2.7 packages
   pip:
     name: "{{ item }}"
-    state: present
+    state: latest
     executable: "{{ pip2_7.executable }}"
   with_items: "{{ pip2_7.packages }}"
   tags: gcalcli
