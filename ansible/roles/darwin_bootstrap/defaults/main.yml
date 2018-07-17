@@ -41,6 +41,7 @@ homebrew_casks:
   - gpg
   - gpg-suite
   - iterm2
+  - omnigraffle
   - slack
   - spotify
   - tunnelblick
@@ -75,6 +76,12 @@ git_repos:
     name: origami
     url: https://github.com/robbykraft/Origami.git
     dest: $scratch/origami
+    version: master
+    force: yes
+  -
+    name: system-design-primer
+    url: https://github.com/donnemartin/system-design-primer
+    dest: $scratch/system-design-primer
     version: master
     force: yes
   -
