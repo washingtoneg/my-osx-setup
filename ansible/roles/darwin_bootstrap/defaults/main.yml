@@ -67,10 +67,22 @@ pip2_7:
 
 git_repos:
   -
+    name: amazon-vpc-cni-k8s
+    url: https://github.com/aws/amazon-vpc-cni-k8s.git
+    dest: $scratch/amazon-vpc-cni-k8s
+    version: master
+    force: yes
+  -
     name: gcalcli
     url: https://github.com/insanum/gcalcli.git
     dest: $scratch/gcalcli
     version: v3.4.0
+    force: yes
+  -
+    name: kops
+    url: https://github.com/kubernetes/kops.git
+    dest: $scratch/kops
+    version: master
     force: yes
   -
     name: origami
