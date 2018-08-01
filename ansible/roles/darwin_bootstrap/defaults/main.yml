@@ -20,6 +20,7 @@ homebrew_packages:
   - jq
   - reattach-to-user-namespace
   - sl
+  - sshrc
   - telnet
   - terminal-notifier
   - terminal-parrot
