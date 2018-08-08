@@ -81,3 +81,10 @@
 - name: Include gcalcli-related tasks
   include: gcalcli.yml
   tags: gcalcli
+
+- name: Installs latest available version of a list of Ruby gems
+  gem:
+    name: "{{ item }}"
+    state: latest
+    user_install: no
+  with_items: "{{ ruby_gems }}"
