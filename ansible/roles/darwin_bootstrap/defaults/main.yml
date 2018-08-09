@@ -7,6 +7,7 @@ directories:
 
 homebrew_packages:
   - ack
+  - asciinema
   - bash-completion
   - bash-git-prompt
   - cmake
