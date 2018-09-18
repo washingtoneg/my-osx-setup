@@ -160,5 +160,6 @@ dockitems_to_persist:
     pos: 6
 
 ruby_gems:
+  - pry
   - thor
   - tmuxinator
