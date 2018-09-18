@@ -81,6 +81,12 @@ git_repos:
     version: v3.4.0
     force: yes
   -
+    name: go-jira
+    url: https://github.com/Netflix-Skunkworks/go-jira.git
+    dest: $scratch/go-jira
+    version: v1.0.20
+    force: yes
+  -
     name: kops
     url: https://github.com/kubernetes/kops.git
     dest: $scratch/kops
