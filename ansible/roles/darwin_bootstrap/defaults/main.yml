@@ -30,6 +30,7 @@ homebrew_packages:
   - rbenv
   - shpotify
   - vim
+  - watch
   - wget
 
 homebrew_casks:
