@@ -23,17 +23,15 @@
 
 - name: Install Homebrew packages
   homebrew:
-    name: "{{ item }}"
+    name: "{{ homebrew_packages }}"
     state: latest
     update_homebrew: yes
-  with_items: "{{ homebrew_packages }}"
 
 - name: Install pip packages
   pip:
-    name: "{{ item }}"
+    name: "{{ pip.packages }}"
     state: latest
     executable: "{{ pip.executable }}"
-  with_items: "{{ pip.packages }}"
 
 - name: Install pip2.7 packages
   pip:
