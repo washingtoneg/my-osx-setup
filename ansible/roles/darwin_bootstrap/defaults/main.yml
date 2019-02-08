@@ -167,6 +167,9 @@ dockitems_to_persist:
     pos: 6
 
 ruby_gems:
+  - awesome_print
   - pry
+  - pry-byebug
+  - pry-doc
   - thor
   - tmuxinator

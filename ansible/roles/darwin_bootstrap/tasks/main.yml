@@ -81,8 +81,5 @@
   tags: gcalcli
 
 - name: Installs latest available version of a list of Ruby gems
-  gem:
-    name: "{{ item }}"
-    state: latest
-    user_install: no
+  command: bash -lc "gem install {{ item }}"
   with_items: "{{ ruby_gems }}"
