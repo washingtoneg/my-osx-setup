@@ -48,6 +48,7 @@ homebrew_casks:
   - slack
   - spotify
   - tunnelblick
+  - typora
   - vagrant
   - virtualbox
 
