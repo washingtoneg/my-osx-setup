@@ -61,13 +61,8 @@ pip:
   packages:
     - awscli
     - markdown-editor
+    - gcalcli
     - ipdb
-
-
-pip2_7:
-  executable: /usr/local/bin/pip2.7
-  packages:
-    - anyjson
 
 git_repos:
   -
@@ -80,7 +75,7 @@ git_repos:
     name: gcalcli
     url: https://github.com/insanum/gcalcli.git
     dest: $scratch/gcalcli
-    version: v3.4.0
+    version: master
     force: yes
   -
     name: go-jira

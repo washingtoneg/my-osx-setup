@@ -33,12 +33,11 @@
     state: latest
     executable: "{{ pip.executable }}"
 
-- name: Install pip2.7 packages
+- name: Install gcalcli via pip for root
   pip:
-    name: "{{ item }}"
+    name: gcalcli
     state: latest
-    executable: "{{ pip2_7.executable }}"
-  with_items: "{{ pip2_7.packages }}"
+  become: true
   tags: gcalcli
 
 - name: Download packages

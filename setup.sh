@@ -366,7 +366,7 @@ trap_signals() {
 run_ansible() {
   info "Running ansible to continue with local setup..."
   pushd "${SCRATCH_PATH}/my-osx-setup/ansible" &>/dev/null
-    exec ansible-playbook playbooks/darwin_bootstrap.yml -v -e SSH_KEY_EMAIL="$SSH_KEY_EMAIL"
+    exec ansible-playbook playbooks/darwin_bootstrap.yml -v -e SSH_KEY_EMAIL="$SSH_KEY_EMAIL" -e USER="$USER"--ask-sudo-pass
   popd
 }
 

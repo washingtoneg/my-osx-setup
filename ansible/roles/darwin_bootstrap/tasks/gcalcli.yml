@@ -1,23 +1,16 @@
 ---
 # gcalcli-related tasks file for darwin_bootstrap
 
-- name: Change line in gcalcli to get it to work
-  lineinfile:
-    path: "$scratch/gcalcli/setup.py"
-    regexp: 'google-api-python-client'
-    insertafter: 'google-api-python-client'
-    line: "          'google-api-python-client<1.3',"
-
 - name: Set up gcalcli
   shell: >
-    python2.7 setup.py install
+    python setup.py install
   args:
     chdir: "$scratch/gcalcli"
   ignore_errors: true
 
 - name: Symlink gcalcli
   file:
-    src: "$scratch/gcalcli/gcalcli"
+    src: "$scratch/gcalcli/gcalcli/cli.py"
     dest: /usr/local/bin/gcalcli
     force: yes
     state: link
@@ -26,5 +19,4 @@
   cron:
     name: "Create next event file for gcalcli"
     minute: "*"
-    job: "/usr/local/bin/python2.7 /usr/local/bin/gcalcli --calendar={{ SSH_KEY_EMAIL }} --nostarted agenda | sed -ne 2p | tr -d '[[:cntrl:]]' | sed 's/0m0;36m//g' | tr -s ' ' > $HOME/.gcalcli_next_event"
-
+    job: "/usr/local/bin/gcalcli --calendar={{ SSH_KEY_EMAIL }} agenda --nostarted | sed -ne 2p | tr -d '[[:cntrl:]]' | sed 's/0m0;36m//g' | tr -s ' ' > {{ USER }}/.gcalcli_next_event"
