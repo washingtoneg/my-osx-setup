@@ -3,7 +3,7 @@
 export DEBUG="${DEBUG:-false}"
 export EMOJI_SUPPORT="${EMOJI_SUPPORT:-true}"
 export LOG_DIR="${LOG_DIR:-''}"
-export LOG_FILE="${LOG_FILE:-/tmp/log}"
+export LOG_FILE="${LOG_FILE:-/tmp/my_bash_script.log}"
 export LOG_FILE_REGEXP="${LOG_FILE_REGEXP:-'*.log'}"
 export USE_CLEAN_TERM="${USE_CLEAN_TERM:-false}"
 
@@ -104,7 +104,7 @@ log_command() {
   # Process all arguments except the first 2
   msg="${@:3}"
 
-  echo -e "${color}$(timestamp) ${CALLING_SCRIPT_NAME} [${text}]: ${msg}${END}\r"
+  echo -e "${color}$(timestamp) $(caller 2 | awk '{print $NF}') [${text}]: ${msg}${END}\r"
 }
 
 print_and_symlink_log_location() {
@@ -225,7 +225,7 @@ timestamp() {
 
 use_clean_terminal() {
   trap restore_terminal EXIT
-  info "Highjacking your terminal for installation purposes (I'll put it back $(fingers_crossed_icon) )..."
+  info "Using a new, secondary terminal screen (I'll put it back $(fingers_crossed_icon) )..."
   sleep 2
 
   # Save screen, clear screen
@@ -240,14 +240,4 @@ warn() {
   log warn "$msg"
 }
 
-debug "Finished sourcing dev_local_utils"
-
-if [[ -z $NAME_OF_CALLING_SCRIPT ]]; then
-  NAME_OF_CALLING_SCRIPT=bash_utils.sh
-  warn 'The variable NAME_OF_CALLING_SCRIPT is unset in the script used to call bash_utils.sh'
-  warn 'Please set the following in the beginning of the script in which you source bash_utils.sh:'
-  printf "\nreadonly NAME_OF_CALLING_SCRIPT=\$(basename \"\$0\")\n\n"
-  fatal 'Please set the environment varible NAME_OF_CALLING_SCRIPT equal to be to the name of the utility that sources bash_utils.sh'
-else
-  debug "NAME_OF_CALLING_SCRIPT variable set to: $NAME_OF_CALLING_SCRIPT"
-fi
+debug "Finished sourcing bash_utils"
