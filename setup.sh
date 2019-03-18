@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eo pipefail
+set -euo pipefail
 
 # Variables for internal script usage
 CURRENT_DIR=$(pwd)
@@ -51,7 +51,7 @@ install_xcode() {
 
 run_ansible() {
   info "Running ansible to continue with local setup..."
-  pushd "${DIRECTORY}/../ansible" &>/dev/null
+  pushd "${DIRECTORY}/ansible" &>/dev/null
     ansible-playbook playbooks/darwin_bootstrap.yml -v --ask-become-pass
   popd
 }
