@@ -1,0 +1,7 @@
+Host *
+  UseKeychain yes
+
+Host github.com
+  User                   git
+  IdentityFile           {{ ssh_private_key }}
+  StrictHostKeyChecking  no

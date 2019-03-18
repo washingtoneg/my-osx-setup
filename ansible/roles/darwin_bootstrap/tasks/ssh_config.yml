@@ -1,0 +1,53 @@
+---
+
+- name: Generate SSH keypair
+  command: "ssh-keygen -q -t rsa -b 4096 -f -C {{ ssh_key_email }} -N {{ ssh_key_password }} {{ ssh_private_key }}"
+  args:
+    creates: "{{ ssh_private_key }}"
+
+- name: "Change mode on {{ ssh_private_key }}"
+  file:
+    path: "{{ ssh_public_key }}"
+    mode: 0600
+
+- name: Read SSH public key to authorize
+  slurp:
+    src: "{{ ssh_public_key }}"
+  register: ssh_pub_key
+
+- name: Authorize key with GitHub
+  github_key:
+    name: Access Key for Compass Laptop
+    token: "{{ ansible_env.GITHUB_API_TOKEN }}"
+    pubkey: "{{ ssh_pub_key['content'] | b64decode }}"
+  delegate_to: localhost
+  register: ssh_key_added_to_github
+  ignore_errors: true
+
+- name: >-
+    Do not fail if SSH key failed to add to GitHub with the error
+    'another key with the same content is already registered', which is fine
+  fail:
+    msg: "{{ ssh_key_added_to_github }}"
+  when: ssh_key_added_to_github.msg is defined and
+        not ssh_key_added_to_github.msg is search('another key with the same content is already registered')
+
+- name: Start the ssh-agent in the background
+  shell: eval "$(ssh-agent -s)"
+  changed_when: True
+
+- name: Removing ALL identity files from ssh-agent
+  command: ssh-add -D
+  changed_when: True
+
+- name: Adding the {{ ssh_private_key }} identity to the ssh-agent
+  command: ssh-add -K {{ ssh_private_key }}
+  changed_when: True
+
+- name: Insert/Update SSH configuration
+  blockinfile:
+    block: "{{ lookup('template', 'ssh_config') }}"
+    dest: "~/.ssh/config"
+    backup: yes
+    create: yes
+    marker: "##-- {mark} ANSIBLE MANAGED BLOCK for my-osx-setup --##"

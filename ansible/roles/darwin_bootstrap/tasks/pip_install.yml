@@ -1,0 +1,27 @@
+---
+
+- name: Download pip package
+  get_url:
+    url: "{{ pip.pkg_location }}"
+    dest: /tmp/get-pip.py
+    mode: 0755
+  changed_when: installed_pip_version.rc != 0
+
+- name: Install pip
+  command: python /tmp/get-pip.py
+  become: true
+  when: installed_pip_version.rc != 0
+  changed_when: installed_pip_version.rc != 0
+
+- name: Remove pip installation file
+  file:
+    path: /tmp/get-pip.py
+    state: absent
+
+- name: Install pip packages
+  pip:
+    name: "{{ pip.packages }}"
+    state: latest
+    executable: "{{ pip.executable }}"
+    extra_args: --user
+  tags: skip_ansible_lint

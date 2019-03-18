@@ -1,0 +1,15 @@
+---
+
+- name: Install xcode
+  command: xcode-select --install
+  changed_when: gcc_error.stderr is search("CommandLineTools")
+
+- name: Wait for user to respond to prompt to install xcode
+  command: gcc
+  retries: 20
+  delay: 15
+  register: gcc_error_after_xcode_install
+  ignore_errors: true
+  changed_when: gcc_error.stderr is search("CommandLineTools")
+  until: not gcc_error_after_xcode_install.stderr is search("CommandLineTools")
+

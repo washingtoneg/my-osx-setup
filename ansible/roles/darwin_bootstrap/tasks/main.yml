@@ -8,30 +8,49 @@
   with_items:
     - "{{ directories }}"
 
-- name: Install Homebrew casks
-  homebrew_cask:
-    name: "{{ item }}"
-    state: latest
-    update_homebrew: yes
-  with_items: "{{ homebrew_casks }}"
+- name: Check for GITHUB_API_TOKEN in environment
+  debug:
+    msg: >-
+      GITHUB_API_TOKEN is required in your environment.
+      Please navigate to https://github.com/settings/tokens/new in your browser and create a new personal access token with
+      the 'admin:public_key' scope and source GITHUB_API_TOKEN in your environment.
+  failed_when: ansible_env.GITHUB_API_TOKEN is not defined
 
-- name: Install Homebrew taps
-  homebrew_tap:
-    name: "{{ item }}"
-    state: present
-  with_items: "{{ homebrew_taps }}"
+- name: Include SSH setup tasks
+  include_tasks: ssh_config.yml
 
-- name: Install Homebrew packages
-  homebrew:
-    name: "{{ homebrew_packages }}"
-    state: latest
-    update_homebrew: yes
+- name: Check if xcode is installed
+  command: gcc
+  register: gcc_error
+  changed_when: gcc_error.stderr is search("CommandLineTools")
+  ignore_errors: true
 
-- name: Install pip packages
-  pip:
-    name: "{{ pip.packages }}"
-    state: latest
-    executable: "{{ pip.executable }}"
+- name: Include xcode install tasks if needed
+  include_tasks: xcode_install.yml
+  when: gcc_error.stderr is search("CommandLineTools")
+
+- name: Include homebrew install tasks
+  include_tasks: homebrew.yml
+
+- name: Start Docker
+  command: open -a Docker
+  changed_when: True
+
+- name: Check if pip is installed
+  command: pip --version
+  register: installed_pip_version
+  changed_when: installed_pip_version.rc != 0
+  ignore_errors: true
+
+- name: Include pip install tasks if needed
+  include_tasks: pip_install.yml
+  when: installed_pip_version.rc != 0
+
+- name: Include AWS CLI configuration tasks
+  include_tasks: awscli_config.yml
+
+- name: Include Docker configuration tasks
+  include_tasks: docker_config.yml
 
 - name: Install gcalcli via pip for root
   pip:
@@ -59,8 +78,9 @@
     dest: "{{ item.dest }}"
     version: "{{ item.version }}"
     force: "{{ item.force }}"
-  tags: gcalcli
+  ignore_errors: true
   with_items: "{{ git_repos }}"
+  tags: gcalcli
 
 - name: Remove all crap from Dock
   shell: dockutil --remove "{{ item }}"
@@ -75,10 +95,10 @@
   shell: dockutil --move "{{ item.name }}" --position "{{ item.pos }}"
   with_items: "{{ dockitems_to_persist }}"
 
-- name: Include gcalcli-related tasks
-  include: gcalcli.yml
-  tags: gcalcli
-
 - name: Installs latest available version of a list of Ruby gems
   command: bash -lc "gem install {{ item }}"
   with_items: "{{ ruby_gems }}"
+
+- name: Include gcalcli-related tasks
+  include: gcalcli.yml
+  tags: gcalcli

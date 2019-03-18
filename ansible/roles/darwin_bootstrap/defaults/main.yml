@@ -1,25 +1,89 @@
 ---
 
+archives_to_download:
+  - name: scrollreverser
+    source: https://pilotmoon.com/downloads/ScrollReverser-1.7.6.zip
+    destination: ~/Applications
+  - name: tcomment_vim
+    source: https://github.com/tomtom/tcomment_vim/archive/3.08.1.zip
+    destination: ~/.vim/pack/tml/start/tcomment
+
 directories:
+  - ~/work
+  - ~/scratch
+  - ~/Library/LaunchAgents
   - ~/.tmux/plugins/tpm
   - ~/.vim/pack/tml/start/tcomment
   - ~/.vim/syntax
+
+docker:
+  settings_file: '~/Library/Group\ Containers/group.com.docker/settings.json'
+  cpu_cores: 2
+  memory_MiB: 8192
+
+dockitems_to_remove:
+  - Adium
+  - App Store
+  - Calendar
+  - Contacts
+  - FaceTime
+  - Keynote
+  - Launchpad
+  - Mail
+  - Maps
+  - Messages
+  - Notes
+  - Numbers
+  - Pages
+  - Photos
+  - Reminders
+  - Safari
+  - System Preferences
+  - iBooks
+  - iTunes
+
+dockitems_to_persist:
+  - name: Google Chrome
+    path: "/Applications/Google Chrome.app"
+    pos: 1
+  - name: Firefox
+    path: "/Applications/Firefox.app"
+    pos: 2
+  - name: Messages
+    path: /Applications/Messages.app
+    pos: 3
+  - name: Slack
+    path: /Applications/Slack.app
+    pos: 4
+  - name: iTerm
+    path: /Applications/iTerm.app
+    pos: 5
+  - name: Spotify
+    path: /Applications/Spotify.app
+    pos: 6
 
 homebrew_packages:
   - ack
   - asciinema
   - bash-completion
   - bash-git-prompt
+  - bazelbuild/tap/bazel
   - cmake
   - docker
   - dockutil
   - fortune
+  - freetype
   - git
   - git-lfs
   - gnu-tar
   - hub
+  - imagemagick
   - jq
+  - postgresql@9.6
+  - python@2
+  - rbenv
   - reattach-to-user-namespace
+  - shpotify
   - sl
   - sshrc
   - telnet
@@ -27,8 +91,6 @@ homebrew_packages:
   - terminal-parrot
   - tmux
   - tree
-  - rbenv
-  - shpotify
   - vim
   - watch
   - wget
@@ -37,34 +99,39 @@ homebrew_casks:
   - 1password
   - adium
   - anki
+  - docker
   - dropbox
-  - firefox
+  #- firefox
   - flycut
-  - google-chrome
+  #- google-chrome
   - gpg
   - gpg-suite
   - iterm2
   - omnigraffle
-  - slack
+  #- slack
   - spotify
   - tunnelblick
   - typora
   - vagrant
-  - virtualbox
+  #- virtualbox
 
 homebrew_taps:
+  - bazelbuild/tap
   - jmhobbs/parrot
 
-pip:
-  # Use Homebrew's pip install location
-  executable: /usr/local/opt/python/libexec/bin/pip
-  packages:
-    - awscli
-    - markdown-editor
-    - gcalcli
-    - ipdb
-
 git_repos:
+  -
+    name: my-osx-setup
+    url: https://github.com/washingtoneg/my-osx-setup.git
+    dest: $scratch/my-osx-setup
+    version: master
+    force: no
+  -
+    name: dotfiles
+    url: https://github.com/washingtoneg/dotfiles.git
+    dest: $scratch/dotfiles
+    version: master
+    force: no
   -
     name: amazon-vpc-cni-k8s
     url: https://github.com/aws/amazon-vpc-cni-k8s.git
@@ -113,54 +180,17 @@ packages_to_download:
     url: https://www.vim.org/scripts/download_script.php?src_id=17497
     destination: ~/.vim/syntax
 
-archives_to_download:
-  - name: scrollreverser
-    source: https://pilotmoon.com/downloads/ScrollReverser-1.7.6.zip
-    destination: ~/Applications
-  - name: tcomment_vim
-    source: https://github.com/tomtom/tcomment_vim/archive/3.08.1.zip
-    destination: ~/.vim/pack/tml/start/tcomment
-
-dockitems_to_remove:
-  - Adium
-  - App Store
-  - Calendar
-  - Contacts
-  - FaceTime
-  - Keynote
-  - Launchpad
-  - Mail
-  - Maps
-  - Messages
-  - Notes
-  - Numbers
-  - Pages
-  - Photos
-  - Reminders
-  - Safari
-  - System Preferences
-  - iBooks
-  - iTunes
-
-dockitems_to_persist:
-  - name: Google Chrome
-    path: "/Applications/Google Chrome.app"
-    pos: 1
-  - name: Firefox
-    path: "/Applications/Firefox.app"
-    pos: 2
-  - name: Messages
-    path: /Applications/Messages.app
-    pos: 3
-  - name: Slack
-    path: /Applications/Slack.app
-    pos: 4
-  - name: iTerm
-    path: /Applications/iTerm.app
-    pos: 5
-  - name: Spotify
-    path: /Applications/Spotify.app
-    pos: 6
+pip:
+  # Use Homebrew's pip install location
+  executable: /usr/local/opt/python/libexec/bin/pip
+  packages:
+    - ansible-lint
+    - awscli
+    - markdown-editor
+    - gcalcli
+    - ipdb
+    - virtualenvwrapper
+  pkg_location: https://bootstrap.pypa.io/get-pip.py
 
 ruby_gems:
   - awesome_print
@@ -172,3 +202,6 @@ ruby_gems:
   - rest-client
   - thor
   - tmuxinator
+
+ssh_private_key: ~/.ssh/id_rsa
+ssh_public_key: ~/.ssh/id_rsa.pub

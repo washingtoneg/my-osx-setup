@@ -1,0 +1,51 @@
+---
+
+- name: Get Docker's CPU allocation
+  shell: >-
+    set -o pipefail;
+    cat {{ docker.settings_file }} | jq .cpus
+  args:
+    executable: /bin/bash
+  register: docker_cpu_allocation
+  changed_when:  docker_cpu_allocation.stdout | int < {{ docker.cpu_cores }}
+
+- name: Get Docker's memory allocation
+  shell: >-
+    set -o pipefail;
+    cat {{ docker.settings_file }} | jq .memoryMiB
+  args:
+    executable: /bin/bash
+  register: docker_memory_allocation
+  changed_when: docker_memory_allocation.stdout | int < docker.memory_MiB
+
+- name: Increase Docker's CPU allocation to at least {{ docker.cpu_cores }} CPUs if needed
+  shell: >-
+    jq '.cpus = {{ docker.cpu_cores }}' {{ docker.settings_file }} > /tmp/docker_settings.tmp \
+      && mv /tmp/docker_settings.tmp {{ docker.settings_file }}
+  when: docker_cpu_allocation.stdout | int < docker.cpu_cores
+  notify: restart docker
+
+- name: Increase Docker's Memory allocation to at least {{ docker.memory_MiB }} MiB if needed
+  shell: >-
+    jq '.memoryMiB = {{ docker.memory_MiB }}' {{ docker.settings_file }} > /tmp/docker_settings.tmp \
+      && mv /tmp/docker_settings.tmp {{ docker.settings_file }}
+  when: docker_memory_allocation.stdout | int < docker.memory_MiB
+  notify: restart docker
+
+- name: Remove docker from list of login items
+  command: >-
+    osascript -e 'tell application "System Events" to delete login item "Docker"'
+  register: remove_docker_from_login
+  changed_when: remove_docker_from_login.rc == 0
+  ignore_errors: true
+
+- name: Add docker to list of login items
+  command: >-
+    osascript -e 'tell application "System Events" to make login item at end with properties {path:"/Applications/Docker.app", hidden:true}'
+  changed_when: True
+
+- name: Log in to Docker Hub
+  command: docker login -u {{ docker_hub_username }} -p {{ docker_hub_password }}
+  changed_when: True
+  when: docker_hub_username | length > 0 and
+        docker_hub_password | length > 0
