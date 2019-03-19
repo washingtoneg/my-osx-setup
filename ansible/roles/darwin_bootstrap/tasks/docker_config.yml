@@ -1,5 +1,19 @@
 ---
 
+- name: Start Docker
+  command: open -a Docker
+  changed_when: True
+  tags: docker
+
+- name: Wait for Docker to start
+  command: docker ps
+  retries: 20
+  delay: 15
+  register: docker_running
+  ignore_errors: true
+  until: docker_running.rc == 0
+  tags: docker
+
 - name: Get Docker's CPU allocation
   shell: >-
     set -o pipefail;
@@ -8,6 +22,7 @@
     executable: /bin/bash
   register: docker_cpu_allocation
   changed_when:  docker_cpu_allocation.stdout | int < {{ docker.cpu_cores }}
+  tags: docker
 
 - name: Get Docker's memory allocation
   shell: >-
@@ -17,6 +32,7 @@
     executable: /bin/bash
   register: docker_memory_allocation
   changed_when: docker_memory_allocation.stdout | int < docker.memory_MiB
+  tags: docker
 
 - name: Increase Docker's CPU allocation to at least {{ docker.cpu_cores }} CPUs if needed
   shell: >-
@@ -24,6 +40,7 @@
       && mv /tmp/docker_settings.tmp {{ docker.settings_file }}
   when: docker_cpu_allocation.stdout | int < docker.cpu_cores
   notify: restart docker
+  tags: docker
 
 - name: Increase Docker's Memory allocation to at least {{ docker.memory_MiB }} MiB if needed
   shell: >-
@@ -31,6 +48,7 @@
       && mv /tmp/docker_settings.tmp {{ docker.settings_file }}
   when: docker_memory_allocation.stdout | int < docker.memory_MiB
   notify: restart docker
+  tags: docker
 
 - name: Remove docker from list of login items
   command: >-
@@ -38,14 +56,18 @@
   register: remove_docker_from_login
   changed_when: remove_docker_from_login.rc == 0
   ignore_errors: true
+  tags: docker
 
 - name: Add docker to list of login items
   command: >-
     osascript -e 'tell application "System Events" to make login item at end with properties {path:"/Applications/Docker.app", hidden:true}'
   changed_when: True
+  tags: docker
 
 - name: Log in to Docker Hub
   command: docker login -u {{ docker_hub_username }} -p {{ docker_hub_password }}
   changed_when: True
   when: docker_hub_username | length > 0 and
         docker_hub_password | length > 0
+  no_log: true
+  tags: docker

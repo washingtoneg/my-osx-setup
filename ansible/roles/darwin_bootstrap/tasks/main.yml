@@ -7,6 +7,7 @@
     state: directory
   with_items:
     - "{{ directories }}"
+  tags: always
 
 - name: Check for GITHUB_API_TOKEN in environment
   debug:
@@ -15,42 +16,50 @@
       Please navigate to https://github.com/settings/tokens/new in your browser and create a new personal access token with
       the 'admin:public_key' scope and source GITHUB_API_TOKEN in your environment.
   failed_when: ansible_env.GITHUB_API_TOKEN is not defined
+  tags: git
 
 - name: Include SSH setup tasks
   include_tasks: ssh_config.yml
+  tags: ssh
 
 - name: Check if xcode is installed
   command: gcc
   register: gcc_error
   changed_when: gcc_error.stderr is search("CommandLineTools")
   ignore_errors: true
+  tags: xcode
 
 - name: Include xcode install tasks if needed
   include_tasks: xcode_install.yml
   when: gcc_error.stderr is search("CommandLineTools")
+  tags: xcode
 
 - name: Include homebrew install tasks
   include_tasks: homebrew.yml
-
-- name: Start Docker
-  command: open -a Docker
-  changed_when: True
+  tags:
+    - homebrew
+    - docker
+    - git
 
 - name: Check if pip is installed
   command: pip --version
   register: installed_pip_version
   changed_when: installed_pip_version.rc != 0
   ignore_errors: true
+  tags: pip
 
 - name: Include pip install tasks if needed
   include_tasks: pip_install.yml
   when: installed_pip_version.rc != 0
+  tags: pip
 
 - name: Include AWS CLI configuration tasks
   include_tasks: awscli_config.yml
+  tags: awscli
 
 - name: Include Docker configuration tasks
   include_tasks: docker_config.yml
+  tags: docker
 
 - name: Install gcalcli via pip for root
   pip:
@@ -71,16 +80,6 @@
     dest: "{{ item.destination }}"
     remote_src: yes
   with_items: "{{ archives_to_download }}"
-
-- name: Checkout git repos
-  git:
-    repo: "{{ item.url }}"
-    dest: "{{ item.dest }}"
-    version: "{{ item.version }}"
-    force: "{{ item.force }}"
-  ignore_errors: true
-  with_items: "{{ git_repos }}"
-  tags: gcalcli
 
 - name: Remove all crap from Dock
   shell: dockutil --remove "{{ item }}"

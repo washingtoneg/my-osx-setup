@@ -4,26 +4,33 @@
   command: >-
     aws configure set aws_access_key_id {{ aws_access_key_id }}
   when: aws_access_key_id | length > 0
+  no_log: true
+  tags: awscli
 
 - name: Configure AWS Secret Access Key
   command: >-
     aws configure set aws_secret_access_key {{ aws_secret_access_key }}
   when: aws_secret_access_key | length > 0
+  no_log: true
+  tags: awscli
 
 - name: Check if AWS config file exists
   stat:
     path: ~/.aws/config
   register: aws_config_file
+  tags: awscli
 
 - name: Configure AWS locally
   command: >-
     aws configure set default.region us-east-1
   when: not aws_config_file.stat.exists
+  tags: awscli
 
 - name: Check if AWS credential file exists
   stat:
     path: ~/.aws/credentials
   register: aws_credentials_file
+  tags: awscli
 
 - name: Check for AWS credentials in environment
   debug:
@@ -33,4 +40,4 @@
       to create an access key. Provide those credentials to this script or run 'aws configure' to set up your AWS credentials.
   failed_when: ( ansible_env.AWS_ACCESS_KEY_ID is not defined and ansible_env.AWS_SECRET_ACCESS_KEY is not defined ) and
                ( not aws_credentials_file.stat.exists )
-
+  tags: awscli

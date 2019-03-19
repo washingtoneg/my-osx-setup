@@ -3,6 +3,7 @@
 - name: Install xcode
   command: xcode-select --install
   changed_when: gcc_error.stderr is search("CommandLineTools")
+  tags: xcode
 
 - name: Wait for user to respond to prompt to install xcode
   command: gcc
@@ -12,4 +13,4 @@
   ignore_errors: true
   changed_when: gcc_error.stderr is search("CommandLineTools")
   until: not gcc_error_after_xcode_install.stderr is search("CommandLineTools")
-
+  tags: xcode

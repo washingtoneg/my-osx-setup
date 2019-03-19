@@ -1,0 +1,38 @@
+---
+
+- name: Checkout git repos
+  git:
+    repo: "{{ item.url }}"
+    dest: "{{ item.dest }}"
+    version: "{{ item.version }}"
+    force: "{{ item.force }}"
+  ignore_errors: true
+  with_items: "{{ git_repos }}"
+  tags:
+    - gcalcli
+    - git
+
+- name: Git config - Do not allow git push without additional commands
+  git_config:
+    name: push.default
+    scope: global
+    value: nothing
+  tags: git
+
+- name: Git config - Set user.name
+  git_config:
+    name: user.name
+    repo: "{{ compass_repo_path }}"
+    scope: local
+    value: "{{ github_username }}"
+  when: github_username | length > 0
+  tags: git
+
+- name: Git config - Set user.email
+  git_config:
+    name: user.email
+    repo: "{{ compass_repo_path }}"
+    scope: local
+    value: "{{ github_email_address }}"
+  when: github_email_address | length > 0
+  tags: git

@@ -6,17 +6,22 @@
     dest: /tmp/get-pip.py
     mode: 0755
   changed_when: installed_pip_version.rc != 0
+  tags: pip
 
 - name: Install pip
   command: python /tmp/get-pip.py
   become: true
   when: installed_pip_version.rc != 0
   changed_when: installed_pip_version.rc != 0
+  tags: pip
+
 
 - name: Remove pip installation file
   file:
     path: /tmp/get-pip.py
     state: absent
+  tags: pip
+
 
 - name: Install pip packages
   pip:
@@ -25,3 +30,4 @@
     executable: "{{ pip.executable }}"
     extra_args: --user
   tags: skip_ansible_lint
+  tags: pip
