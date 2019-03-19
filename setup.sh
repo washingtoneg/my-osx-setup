@@ -21,7 +21,7 @@ install_ansible_dependencies() {
   local ansible_dependencies=(python ansible jq)
 
   for dependency in  ${ansible_dependencies[*]}; do
-    brew install $dependency || brew upgrade $dependency | stream_info
+    brew install $dependency 2>&1 | tee -a $LOG_FILE || brew upgrade $dependency 2>&1 |  tee -a $LOG_FILE
   done
 }
 
@@ -29,7 +29,7 @@ install_homebrew() {
   info "Checking for Homebrew, and installing if necessary"
   if test ! $(which brew); then
     info 'Installing homebrew...'
-    ruby -e "$(curl -fsSL $HOMEBREW_DOWNLOAD_URL)" | stream_info
+     ruby -e "$(curl -fsSL $HOMEBREW_DOWNLOAD_URL)" 2>&1 | tee -a $LOG_FILE
   else
     info 'Homebrew installed.'
   fi
@@ -52,7 +52,7 @@ install_xcode() {
 run_ansible() {
   info "Running ansible to continue with local setup..."
   pushd "${DIRECTORY}/ansible" &>/dev/null
-    ansible-playbook playbooks/darwin_bootstrap.yml -v --ask-become-pass
+    ANSIBLE_LOG_PATH=$LOG_FILE ansible-playbook playbooks/darwin_bootstrap.yml -v --ask-become-pass
   popd
 }
 
