@@ -1,0 +1,10 @@
+---
+
+# Set up a user's environment for running ansible
+
+- name: ansible_setup
+  hosts: localhost
+  gather_facts: True
+
+  roles:
+  - role: ../roles/ansible_setup

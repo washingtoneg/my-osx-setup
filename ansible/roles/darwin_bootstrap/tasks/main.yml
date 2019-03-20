@@ -1,6 +1,12 @@
 ---
 # tasks file for darwin_bootstrap
 
+- name: Include role to set up ansible if needed
+  include_role:
+    name: ../roles/ansible_setup
+  when: ansible_env.ANSIBLE_CONFIG is not defined
+  tags: always
+
 - name: Create needed directories
   file:
     name: "{{ item }}"
