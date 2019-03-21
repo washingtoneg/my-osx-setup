@@ -1,7 +1,7 @@
 darwin_bootstrap
 ================
 
-`darwin_bootstrap` is an ansible role that can be utilized to configure new laptops for Compass Engineers.
+`darwin_bootstrap` is an ansible role that can be utilized to configure a new laptop.
 
 Requirements
 ------------
