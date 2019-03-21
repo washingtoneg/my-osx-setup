@@ -1,9 +1,15 @@
 ---
 
 - name: Generate SSH keypair
-  command: "ssh-keygen -q -t rsa -b 4096 -f -C {{ ssh_key_email }} -N {{ ssh_key_password }} {{ ssh_private_key }}"
+  command: "ssh-keygen -q -t rsa -b 4096 -f {{ ssh_private_key }}"
   args:
     creates: "{{ ssh_private_key }}"
+  tags: ssh
+
+- name: Change mode on {{ ssh_private_key }}
+  file:
+    path: "{{ ssh_public_key }}"
+    mode: 0600
   tags: ssh
 
 - name: "Change mode on {{ ssh_private_key }}"
@@ -39,11 +45,6 @@
 
 - name: Start the ssh-agent in the background
   shell: eval "$(ssh-agent -s)"
-  changed_when: True
-  tags: ssh
-
-- name: Removing ALL identity files from ssh-agent
-  command: ssh-add -D
   changed_when: True
   tags: ssh
 
