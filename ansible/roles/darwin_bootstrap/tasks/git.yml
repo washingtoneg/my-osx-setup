@@ -22,8 +22,7 @@
 - name: Git config - Set user.name
   git_config:
     name: user.name
-    repo: "{{ compass_repo_path }}"
-    scope: local
+    scope: global
     value: "{{ github_username }}"
   when: github_username | length > 0
   tags: git
@@ -31,8 +30,7 @@
 - name: Git config - Set user.email
   git_config:
     name: user.email
-    repo: "{{ compass_repo_path }}"
-    scope: local
+    scope: global
     value: "{{ github_email_address }}"
   when: github_email_address | length > 0
   tags: git

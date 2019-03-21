@@ -20,7 +20,7 @@
 
 - name: Authorize key with GitHub
   github_key:
-    name: Access Key for Compass Laptop
+    name: Access Key for My Laptop
     token: "{{ ansible_env.GITHUB_API_TOKEN }}"
     pubkey: "{{ ssh_pub_key['content'] | b64decode }}"
   delegate_to: localhost
