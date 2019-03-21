@@ -12,6 +12,7 @@
   register: docker_running
   ignore_errors: true
   until: docker_running.rc == 0
+  changed_when: docker_running.rc != 0
   tags: docker
 
 - name: Get Docker's CPU allocation
