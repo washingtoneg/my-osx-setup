@@ -7,22 +7,6 @@
   gather_facts: True
 
   vars_prompt:
-    - name: github_username
-      prompt: "Enter your GitHub username (leave blank if you do not want to update your global git config)"
-      private: no
-
-    - name: github_email_address
-      prompt: "Enter you GitHub email address (leave blank if you do not want to update your global git config)"
-      private: no
-
-    - name: ssh_key_email
-      prompt: "Please enter the email address you would like associated with your SSH key (leave blank to skp SSH key creation)"
-      private: yes
-
-    - name: ssh_key_password
-      prompt: "Please create a password for your SSH key (minimum five characters). Leave blank to skp SSH key creation."
-      private: yes
-
     - name: aws_access_key_id
       prompt: "Enter you AWS Access Key ID (leave blank if you do not want to update your default aws config)"
       private: yes

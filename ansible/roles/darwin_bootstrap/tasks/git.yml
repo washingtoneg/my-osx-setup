@@ -11,6 +11,7 @@
   tags:
     - gcalcli
     - git
+    #- skip_ansible_lint
 
 - name: Git config - Do not allow git push without additional commands
   git_config:
@@ -19,11 +20,27 @@
     value: nothing
   tags: git
 
+- name: Git API - Get user.name
+  uri:
+    url: https://api.github.com/user
+    headers:
+      Authorization: token {{ ansible_env.GITHUB_API_TOKEN }}
+  register: github_username
+  tags: git
+
+- name: Git API - Get user.email
+  uri:
+    url: https://api.github.com/user/emails
+    headers:
+      Authorization: token {{ ansible_env.GITHUB_API_TOKEN }}
+  register: github_email_address
+  tags: git
+
 - name: Git config - Set user.name
   git_config:
     name: user.name
     scope: global
-    value: "{{ github_username }}"
+    value: "{{ github_username.json.login }}"
   when: github_username | length > 0
   tags: git
 
@@ -31,6 +48,6 @@
   git_config:
     name: user.email
     scope: global
-    value: "{{ github_email_address }}"
+    value: "{{ github_email_address.json | selectattr('primary') | map(attribute='email') | list | first }}"
   when: github_email_address | length > 0
   tags: git
