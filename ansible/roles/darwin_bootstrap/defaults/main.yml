@@ -83,6 +83,7 @@ homebrew_packages:
   - python@2
   - rbenv
   - reattach-to-user-namespace
+  - shellcheck
   - shpotify
   - sl
   - sshrc
