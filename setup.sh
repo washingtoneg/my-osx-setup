@@ -5,15 +5,16 @@ set -euo pipefail
 # Variables for internal script usage
 CURRENT_DIR=$(pwd)
 DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-BASH_UTILS=$DIRECTORY/bash_utils.sh
 HOMEBREW_DOWNLOAD_URL=https://raw.githubusercontent.com/Homebrew/install/master/install
 
 cleanup() {
-  cd $CURRENT_DIR &>/dev/null
+  cd "$CURRENT_DIR" &>/dev/null
 }
 
 source_bash_utils() {
-  source $BASH_UTILS
+  # shellcheck disable=SC1090
+  # shellcheck disable=SC1091
+  source "$DIRECTORY/bash_utils.sh"
 }
 
 install_ansible_dependencies() {
@@ -21,15 +22,15 @@ install_ansible_dependencies() {
   local ansible_dependencies=(python ansible jq)
 
   for dependency in  ${ansible_dependencies[*]}; do
-    brew install $dependency 2>&1 | tee -a $LOG_FILE || brew upgrade $dependency 2>&1 |  tee -a $LOG_FILE
+    brew install "$dependency" 2>&1 | tee -a "$LOG_FILE" || brew upgrade "$dependency" 2>&1 | tee -a "$LOG_FILE"
   done
 }
 
 install_homebrew() {
   info "Checking for Homebrew, and installing if necessary"
-  if test ! $(which brew); then
+  if test ! "$(command -v brew &>/dev/null)"; then
     info 'Installing homebrew...'
-     ruby -e "$(curl -fsSL $HOMEBREW_DOWNLOAD_URL)" 2>&1 | tee -a $LOG_FILE
+     ruby -e "$(curl -fsSL $HOMEBREW_DOWNLOAD_URL)" 2>&1 | tee -a "$LOG_FILE"
   else
     info 'Homebrew installed.'
   fi
