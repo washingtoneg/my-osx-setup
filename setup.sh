@@ -53,7 +53,7 @@ install_xcode() {
 run_ansible() {
   info "Running ansible to continue with local setup..."
   pushd "${DIRECTORY}/ansible" &>/dev/null
-    ANSIBLE_LOG_PATH=$LOG_FILE ansible-playbook playbooks/darwin_bootstrap.yml -v --ask-become-pass
+    ANSIBLE_CONFIG=ansible.cfg ANSIBLE_LOG_PATH=$LOG_FILE ansible-playbook playbooks/darwin_bootstrap.yml -v --ask-become-pass
   popd
 }
 
