@@ -22,11 +22,15 @@
       Please navigate to https://github.com/settings/tokens/new in your browser and create a new personal access token with
       the 'admin:public_key' scope and source GITHUB_API_TOKEN in your environment.
   failed_when: ansible_env.GITHUB_API_TOKEN is not defined
-  tags: git
+  tags:
+    - git
+    - ssh
 
 - name: Include SSH setup tasks
   include_tasks: ssh_config.yml
-  tags: ssh
+  tags:
+    - git
+    - ssh
 
 - name: Check if xcode is installed
   command: gcc
@@ -43,21 +47,26 @@
 - name: Include homebrew install tasks
   include_tasks: homebrew.yml
   tags:
-    - homebrew
     - docker
     - git
+    - homebrew
+    - pip
 
 - name: Check if pip is installed
   command: pip --version
   register: installed_pip_version
   changed_when: installed_pip_version.rc != 0
   ignore_errors: true
-  tags: pip
+  tags:
+    - awscli
+    - pip
 
 - name: Include pip install tasks if needed
   include_tasks: pip_install.yml
   when: installed_pip_version.rc != 0
-  tags: pip
+  tags:
+    - awscli
+    - pip
 
 - name: Include AWS CLI configuration tasks
   include_tasks: awscli_config.yml
