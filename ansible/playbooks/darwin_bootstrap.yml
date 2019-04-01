@@ -5,15 +5,5 @@
 - name: darwin_bootsrap
   hosts: localhost
   gather_facts: True
-
-  vars_prompt:
-    - name: aws_access_key_id
-      prompt: "Enter you AWS Access Key ID (leave blank if you do not want to update your default aws config)"
-      private: yes
-
-    - name: aws_secret_access_key
-      prompt: "Enter you AWS Secret Access Key (leave blank if you do not want to update your default aws config)"
-      private: yes
-
   roles:
   - role: ../roles/darwin_bootstrap

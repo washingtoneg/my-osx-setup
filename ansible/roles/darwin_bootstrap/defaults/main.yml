@@ -8,6 +8,9 @@ archives_to_download:
     source: https://github.com/tomtom/tcomment_vim/archive/3.08.1.zip
     destination: ~/.vim/pack/tml/start/tcomment
 
+aws_credentials_file: ~/.aws/credentials
+aws_credentials_csv: ~/Downloads/accessKeys.csv
+
 directories:
   - ~/work
   - ~/scratch

@@ -1,16 +1,144 @@
 ---
 
-- name: Configure AWS Access Key ID
-  command: >-
-    aws configure set aws_access_key_id {{ aws_access_key_id }}
-  when: aws_access_key_id | length > 0
+- name: Check if AWS credential file exists
+  stat:
+    path: "{{ aws_credentials_file }}"
+  register: credentials_file
+  changed_when: credentials_file.stat.exists
+  tags: awscli
+
+- name: Check if AWS credential file is formatted correctly
+  set_fact:
+    aws_access_key_id: "{{ lookup('ini', 'aws_access_key_id section=default  file={{ aws_credentials_file }}') }}"
+    aws_secret_access_key: "{{ lookup('ini', 'aws_secret_access_key section=default  file={{ aws_credentials_file }}') }}"
+  no_log: true
+  register: aws_facts
+  when: credentials_file.stat.exists
+  ignore_errors: true
+  tags: awscli
+
+- name: Fail if Credential file is formatted incorrectly
+  fail:
+    msg: "{{ aws_facts.msg |
+             regex_replace('aws_access_key_id.*', '') |
+             regex_replace('aws_secret_access_key.*', '') }}"
+  when: aws_facts.msg is defined
+  tags: awscli
+
+- name: Check if acessKeys.csv file exists
+  stat:
+    path: "{{ aws_credentials_csv }}"
+  register: credentials_csv
+  changed_when: (not credentials_file.stat.exists)
+                or (aws_facts.ansible_facts.aws_access_key_id is not defined or
+                    aws_facts.ansible_facts.aws_secret_access_key is not defined)
+                or (aws_facts.ansible_facts.aws_access_key_id[0] is not defined or
+                    aws_facts.ansible_facts.aws_secret_access_key[0] is not defined)
+  when: (not credentials_file.stat.exists)
+        or (aws_facts.ansible_facts.aws_access_key_id is not defined or
+            aws_facts.ansible_facts.aws_secret_access_key is not defined)
+        or (aws_facts.ansible_facts.aws_access_key_id[0] is not defined or
+            aws_facts.ansible_facts.aws_secret_access_key[0] is not defined)
+  tags: awscli
+
+- name: Read AWS credentials from downloaded file
+  read_csv:
+    path: "{{ aws_credentials_csv }}"
+  register: aws_credentials
+  changed_when: credentials_csv.stat is defined and credentials_csv.stat.exists and
+                ( (aws_facts.ansible_facts.aws_access_key_id is not defined or
+                    aws_facts.ansible_facts.aws_secret_access_key is not defined)
+                or (aws_facts.ansible_facts.aws_access_key_id[0] is not defined or
+                    aws_facts.ansible_facts.aws_secret_access_key[0] is not defined) )
+  when: credentials_csv.stat is defined and credentials_csv.stat.exists and
+        ( (aws_facts.ansible_facts.aws_access_key_id is not defined or
+            aws_facts.ansible_facts.aws_secret_access_key is not defined)
+        or (aws_facts.ansible_facts.aws_access_key_id[0] is not defined or
+            aws_facts.ansible_facts.aws_secret_access_key[0] is not defined) )
+  #no_log: true
+  tags: awscli
+
+- name: Set AWS credentials facts
+  set_fact:
+    aws_access_key_id_csv: "{{ aws_credentials.list[0]['Access key ID'] }}"
+    aws_secret_access_key_csv: "{{ aws_credentials.list[0]['Secret access key'] }}"
+  changed_when: credentials_csv.stat is defined and credentials_csv.stat.exists
+  when: credentials_csv.stat is defined and credentials_csv.stat.exists and
+        ( (aws_facts.ansible_facts.aws_access_key_id is not defined or
+            aws_facts.ansible_facts.aws_secret_access_key is not defined)
+        or (aws_facts.ansible_facts.aws_access_key_id[0] is not defined or
+            aws_facts.ansible_facts.aws_secret_access_key[0] is not defined) )
   no_log: true
   tags: awscli
 
-- name: Configure AWS Secret Access Key
+- name: Prompt user for AWS Access Key ID
+  pause:
+    prompt: "Enter you AWS Access Key ID: "
+    echo: no
+  delegate_to: localhost
+  register: aws_access_key_id_user
+  changed_when: ( aws_facts is not defined
+        or aws_facts.ansible_facts is not defined
+        or aws_facts.ansible_facts.aws_access_key_id is not defined
+        or aws_facts.ansible_facts.aws_access_key_id[0] is not defined )
+        and ( aws_access_key_id_csv is not defined
+        or not credentials_csv.stat.exists )
+  when: ( aws_facts is not defined
+        or aws_facts.ansible_facts is not defined
+        or aws_facts.ansible_facts.aws_access_key_id is not defined
+        or aws_facts.ansible_facts.aws_access_key_id[0] is not defined )
+        and ( aws_access_key_id_csv is not defined
+        or not credentials_csv.stat.exists )
+  no_log: true
+  tags: awscli
+
+- name: Prompt user for AWS Secret Access Key
+  pause:
+    prompt: "Enter you AWS Secret Access Key: "
+    echo: no
+  delegate_to: localhost
+  register: aws_secret_access_key_user
+  changed_when: ( aws_facts is not defined
+                or aws_facts.ansible_facts is not defined
+                or aws_facts.ansible_facts.aws_secret_access_key is not defined
+                or aws_facts.ansible_facts.aws_secret_access_key[0] is not defined )
+                and ( aws_secret_access_key_csv is not defined
+                or not credentials_csv.stat.exists )
+  when: aws_facts is not defined
+        or aws_facts.ansible_facts is not defined
+        or aws_facts.ansible_facts.aws_secret_access_key is not defined
+        or aws_facts.ansible_facts.aws_secret_access_key[0] is not defined
+        and aws_secret_access_key_csv is not defined
+        and not credentials_csv.stat.exists
+  no_log: true
+  tags: awscli
+
+- name: Configure AWS Access Key ID (from CSV file)
   command: >-
-    aws configure set aws_secret_access_key {{ aws_secret_access_key }}
-  when: aws_secret_access_key | length > 0
+    aws configure set aws_access_key_id {{ aws_access_key_id_csv }}
+  when: aws_access_key_id_csv is defined
+  tags: awscli
+
+- name: Configure AWS Access Key ID (from user input)
+  command: >-
+    aws configure set aws_access_key_id {{ aws_access_key_id_user.user_input }}
+  when: aws_access_key_id_user.user_input is defined and
+        aws_access_key_id_user.user_input | length > 0
+  no_log: true
+  tags: awscli
+
+- name: Configure AWS Secret Access Key (from CSV file)
+  command: >-
+    aws configure set aws_secret_access_key {{ aws_secret_access_key_csv }}
+  when: aws_secret_access_key_csv is defined
+  no_log: true
+  tags: awscli
+
+- name: Configure AWS Secret Access Key (from user input)
+  command: >-
+    aws configure set aws_secret_access_key {{ aws_secret_access_key_user.user_input }}
+  when: aws_secret_access_key_user.user_input is defined and
+        aws_secret_access_key_user.user_input | length > 0
   no_log: true
   tags: awscli
 
@@ -26,10 +154,12 @@
   when: not aws_config_file.stat.exists
   tags: awscli
 
-- name: Check if AWS credential file exists
+# Check again for the credential file as it may have been configured via CSV or user input
+- name: Check again if AWS credential file exists
   stat:
-    path: ~/.aws/credentials
-  register: aws_credentials_file
+    path: "{{ aws_credentials_file }}"
+  register: credentials_file
+  changed_when: credentials_file.stat.exists
   tags: awscli
 
 - name: Check for AWS credentials in environment
@@ -39,5 +169,10 @@
       Please navigate to https://console.aws.amazon.com/iam/home?#/users/{{ ansible_env.USER }}?section=security_credentials
       to create an access key. Provide those credentials to this script or run 'aws configure' to set up your AWS credentials.
   failed_when: ( ansible_env.AWS_ACCESS_KEY_ID is not defined and ansible_env.AWS_SECRET_ACCESS_KEY is not defined ) and
-               ( not aws_credentials_file.stat.exists )
+               ( not credentials_file.stat.exists )
   tags: awscli
+
+- name: Test IAM privileges
+  command: aws iam get-user
+  tags: awscli
+  changed_when: true
