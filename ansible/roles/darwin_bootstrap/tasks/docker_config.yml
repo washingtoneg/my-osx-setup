@@ -65,10 +65,37 @@
   changed_when: True
   tags: docker
 
-- name: Log in to Docker Hub
-  command: docker login -u {{ docker_hub_username }} -p {{ docker_hub_password }}
-  changed_when: True
-  when: docker_hub_username | length > 0 and
-        docker_hub_password | length > 0
+- name: Prompt user for Docker Hub username
+  pause:
+    prompt: "Enter your Docker Hub username: "
+  delegate_to: localhost
+  register: docker_hub_username
+  changed_when: true
+  tags: docker
+
+- name: Prompt user for Docker Hub password
+  pause:
+    prompt: "Enter your Docker Hub password: "
+    echo: false
+  delegate_to: localhost
+  register: docker_hub_password
+  changed_when: true
   no_log: true
+  tags: docker
+
+- name: Log in to Docker Hub
+  command: docker login -u {{ docker_hub_username.user_input }} -p {{ docker_hub_password.user_input }}
+  changed_when: True
+  when: docker_hub_username.user_input | length > 0 and
+        docker_hub_password.user_input | length > 0
+  no_log: true
+  register: docker_login
+  ignore_errors: true
+  tags: docker
+
+- name: Fail if Credential file is formatted incorrectly
+  fail:
+    msg: "{{ docker_login.stderr }}"
+  when: docker_login.rc != 0
+  tags: awscli
   tags: docker

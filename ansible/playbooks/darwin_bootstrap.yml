@@ -15,13 +15,5 @@
       prompt: "Enter you AWS Secret Access Key (leave blank if you do not want to update your default aws config)"
       private: yes
 
-    - name: docker_hub_username
-      prompt: "Enter you Docker Hub username (leave blank if you do not want to sign in to docker hub via the CLI)"
-      private: no
-
-    - name: docker_hub_password
-      prompt: "Enter you Docker Hub password (leave blank if you do not want to sign in to docker hub via the CLI)"
-      private: yes
-
   roles:
   - role: ../roles/darwin_bootstrap
