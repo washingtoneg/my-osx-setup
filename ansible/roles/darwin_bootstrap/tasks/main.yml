@@ -95,6 +95,7 @@
     dest: "{{ item.destination }}"
     remote_src: yes
   with_items: "{{ archives_to_download }}"
+  notify: start installed applications
 
 - name: Remove all crap from Dock
   shell: dockutil --remove "{{ item }}"

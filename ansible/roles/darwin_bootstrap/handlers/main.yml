@@ -1,0 +1,5 @@
+- name: start installed applications
+  command: open -a {{ item }}
+  with_items:
+    - 'Scroll\ Reverser'
+    - SizeUp
