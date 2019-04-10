@@ -32,6 +32,14 @@
     - git
     - ssh
 
+- name: Include git-related tasks
+  include_tasks: git.yml
+  tags: git
+
+- name: Include shell configuration tasks
+  include_tasks: shell_config.yml
+  tags: shell
+
 - name: Check if xcode is installed
   command: gcc
   register: gcc_error

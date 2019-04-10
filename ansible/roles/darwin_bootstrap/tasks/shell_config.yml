@@ -1,0 +1,20 @@
+---
+
+- name: Get list of dotfiles
+  shell: ls -d .[a-zA-Z]* | grep -v .gitignore | grep -v .git
+  register: dotfiles
+  args:
+    chdir: $scratch/dotfiles
+  tags: shell
+
+- debug:
+    msg: "{{ dotfiles.stdout.splitlines() | length }}"
+  tags: shell
+
+- name: Symlink Dotfiles
+  file:
+    src: "$scratch/dotfiles/{{ item }}"
+    dest: "~/{{ item }}"
+    state: link
+  with_items: "{{ dotfiles.stdout.splitlines() }}"
+  tags: shell
