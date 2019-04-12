@@ -1,0 +1,11 @@
+#!/bin/bash
+
+/usr/local/bin/gcalcli \
+  --calendar {{ ansible_env.GCALCLI_CALENDAR_USER }} \
+  --nocache \
+  agenda  \
+    --nostarted \
+      | sed -ne 2p \
+      | tr -d '[[:cntrl:]]' \
+      | sed 's/0m0m//g' \
+      | tr -s '  '

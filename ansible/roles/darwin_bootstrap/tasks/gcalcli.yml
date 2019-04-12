@@ -7,6 +7,7 @@
   args:
     chdir: "$scratch/gcalcli"
   ignore_errors: true
+  tags: always
 
 - name: Symlink gcalcli
   file:
@@ -14,9 +15,28 @@
     dest: /usr/local/bin/gcalcli
     force: yes
     state: link
+  tags: always
 
-- name: Create next event file for gcalcli
-  cron:
-    name: "Create next event file for gcalcli"
-    minute: "*"
-    job: "/usr/local/bin/gcalcli --calendar={{ SSH_KEY_EMAIL }} agenda --nostarted | sed -ne 2p | tr -d '[[:cntrl:]]' | sed 's/0m0;36m//g' | tr -s ' ' > {{ USER }}/.gcalcli_next_event"
+- name: Create binary to poll for the next calendar event
+  template:
+    src: get_next_calendar_event.j2
+    dest: /usr/local/bin/get_next_calendar_event
+    owner: "{{ ansible_env.USER }}"
+    group: admin
+    mode: '0755'
+  tags: always
+
+- name: Create daemon to poll for the next calendar event
+  template:
+    src: com.google.gcalcli.plist.j2
+    dest: /Library/LaunchDaemons/com.google.gcalcli.plist
+    owner: root
+    group: wheel
+    mode: '0644'
+  become: true
+  tags: always
+
+- name: Launch the calendar-polling daemon
+  command: launchctl load /Library/LaunchDaemons/com.google.gcalcli.plist
+  become: true
+  tags: always
