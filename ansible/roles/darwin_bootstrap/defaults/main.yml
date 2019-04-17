@@ -198,14 +198,17 @@ pip:
 
 ruby_gems:
   - awesome_print
+  - bundler
   - dotenv
   - plaid
   - pry
   - pry-byebug
   - pry-doc
   - rest-client
+  - serverspec
   - thor
   - tmuxinator
 
+ruby_version: 2.6.1
 ssh_private_key: ~/.ssh/id_rsa
 ssh_public_key: ~/.ssh/id_rsa.pub

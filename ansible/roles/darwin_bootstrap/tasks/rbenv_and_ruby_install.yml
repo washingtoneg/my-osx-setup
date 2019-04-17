@@ -1,0 +1,22 @@
+---
+
+- name: Install Ruby v{{ ruby_version }} with rbenv
+  shell: |
+    eval "$(rbenv init -)"
+    rbenv install {{ ruby_version }}
+  tags:
+    - rbenv
+    - ruby
+
+- name: Set global Ruby version
+  shell: |
+    eval "$(rbenv init -)"
+    rbenv global {{ ruby_version }}
+  tags:
+    - rbenv
+    - ruby
+
+- name: Installs latest available version of a list of Ruby gems
+  command: bash -lc "gem install {{ item }}"
+  with_items: "{{ ruby_gems }}"
+  tags: ruby

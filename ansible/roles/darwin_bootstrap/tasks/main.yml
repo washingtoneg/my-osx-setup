@@ -59,6 +59,7 @@
     - git
     - homebrew
     - pip
+    - ruby
 
 - name: Check if pip is installed
   command: pip --version
@@ -118,9 +119,11 @@
   shell: dockutil --move "{{ item.name }}" --position "{{ item.pos }}"
   with_items: "{{ dockitems_to_persist }}"
 
-- name: Installs latest available version of a list of Ruby gems
-  command: bash -lc "gem install {{ item }}"
-  with_items: "{{ ruby_gems }}"
+- name: Include rbenv/ruby tasks
+  include_tasks: rbenv_and_ruby_install.yml
+  tags:
+    - rbenv
+    - ruby
 
 - name: Include gcalcli-related tasks
   include: gcalcli.yml
