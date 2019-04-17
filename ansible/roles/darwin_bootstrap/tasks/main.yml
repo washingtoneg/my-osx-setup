@@ -106,24 +106,15 @@
   with_items: "{{ archives_to_download }}"
   notify: start installed applications
 
-- name: Remove all crap from Dock
-  shell: dockutil --remove "{{ item }}"
-  ignore_errors: true
-  with_items: "{{ dockitems_to_remove }}"
-
-- name: Check if items in dock exist
-  shell: dockutil --find "{{ item.name }}" || dockutil --add "{{ item.path }}"
-  with_items: "{{ dockitems_to_persist }}"
-
-- name: Fix order
-  shell: dockutil --move "{{ item.name }}" --position "{{ item.pos }}"
-  with_items: "{{ dockitems_to_persist }}"
-
 - name: Include rbenv/ruby tasks
   include_tasks: rbenv_and_ruby_install.yml
   tags:
     - rbenv
     - ruby
+
+- name: Include dock-related tasks
+  include: dock_setup.yml
+  tags: dock
 
 - name: Include gcalcli-related tasks
   include: gcalcli.yml
