@@ -127,49 +127,49 @@ git_repos:
   -
     name: my-osx-setup
     url: https://github.com/washingtoneg/my-osx-setup.git
-    dest: $scratch/my-osx-setup
+    dest: ~/scratch/my-osx-setup
     version: master
     force: no
   -
     name: dotfiles
     url: https://github.com/washingtoneg/dotfiles.git
-    dest: $scratch/dotfiles
+    dest: ~/scratch/dotfiles
     version: master
     force: no
   -
     name: amazon-vpc-cni-k8s
     url: https://github.com/aws/amazon-vpc-cni-k8s.git
-    dest: $scratch/amazon-vpc-cni-k8s
+    dest: ~/scratch/amazon-vpc-cni-k8s
     version: master
     force: yes
   -
     name: gcalcli
     url: https://github.com/insanum/gcalcli.git
-    dest: $scratch/gcalcli
+    dest: ~/scratch/gcalcli
     version: master
     force: yes
   -
     name: go-jira
     url: https://github.com/Netflix-Skunkworks/go-jira.git
-    dest: $scratch/go-jira
+    dest: ~/scratch/go-jira
     version: v1.0.20
     force: yes
   -
     name: kops
     url: https://github.com/kubernetes/kops.git
-    dest: $scratch/kops
+    dest: ~/scratch/kops
     version: master
     force: yes
   -
     name: origami
     url: https://github.com/robbykraft/Origami.git
-    dest: $scratch/origami
+    dest: ~/scratch/origami
     version: master
     force: yes
   -
     name: system-design-primer
     url: https://github.com/donnemartin/system-design-primer
-    dest: $scratch/system-design-primer
+    dest: ~/scratch/system-design-primer
     version: master
     force: yes
   -

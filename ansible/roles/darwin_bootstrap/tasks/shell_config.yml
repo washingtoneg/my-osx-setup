@@ -4,7 +4,7 @@
   shell: ls -d .[a-zA-Z]* | grep -v .gitignore | grep -v .git
   register: dotfiles
   args:
-    chdir: $scratch/dotfiles
+    chdir: ~/scratch/dotfiles
   tags: shell
 
 - debug:
@@ -13,7 +13,7 @@
 
 - name: Symlink Dotfiles
   file:
-    src: "$scratch/dotfiles/{{ item }}"
+    src: "~/scratch/dotfiles/{{ item }}"
     dest: "~/{{ item }}"
     state: link
   with_items: "{{ dotfiles.stdout.splitlines() }}"

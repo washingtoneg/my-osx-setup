@@ -5,13 +5,13 @@
   shell: >
     python setup.py install
   args:
-    chdir: "$scratch/gcalcli"
+    chdir: "~/scratch/gcalcli"
   ignore_errors: true
   tags: gcalcli
 
 - name: Symlink gcalcli
   file:
-    src: "$scratch/gcalcli/gcalcli/cli.py"
+    src: "~/scratch/gcalcli/gcalcli/cli.py"
     dest: /usr/local/bin/gcalcli
     force: yes
     state: link
