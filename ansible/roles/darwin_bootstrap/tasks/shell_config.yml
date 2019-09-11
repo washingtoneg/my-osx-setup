@@ -1,7 +1,7 @@
 ---
 
 - name: Get list of dotfiles
-  shell: ls -d .[a-zA-Z]* | grep -v .gitignore | grep -v .git
+  shell: ls -d .[a-zA-Z]* | grep -v .gitignore | grep -v .git$
   register: dotfiles
   args:
     chdir: ~/scratch/dotfiles
