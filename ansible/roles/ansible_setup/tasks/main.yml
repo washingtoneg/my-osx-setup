@@ -10,23 +10,3 @@
     group: wheel
   become: true
   tags: always
-
-- name: Ensure {{ bash_profile }} exists
-  file:
-    name: "{{ bash_profile }}"
-    state: touch
-  tags: always
-
-- name: Add ANSIBLE_CONFIG to {{ bash_profile }}
-  lineinfile:
-    dest: "{{ bash_profile }}"
-    state: present
-    line: "export ANSIBLE_CONFIG={{ ansible_config_path }}"
-  tags: always
-
-- name: Check environment for ANSIBLE_CONFIG
-  debug:
-    msg: >-
-      ANSIBLE_CONFIG is required in your environment. Please source your ~/.bash_profile to set it.
-  failed_when: ansible_env.ANSIBLE_CONFIG is not defined
-  tags: always
