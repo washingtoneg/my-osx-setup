@@ -1,10 +1,15 @@
 #!/bin/bash
 
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export PATH=/usr/local/opt/python/libexec/bin:$PATH
+
 /usr/local/bin/gcalcli \
   --calendar {{ ansible_env.GCALCLI_CALENDAR_USER }} \
   --nocache \
   agenda  \
     --nostarted \
+    --no-military \
       | sed -ne 2p \
       | tr -d '[[:cntrl:]]' \
       | sed 's/0m0m//g' \
