@@ -81,6 +81,8 @@ homebrew_packages:
   - gnu-tar
   - hub
   - imagemagick
+  - jid
+  - jo
   - jq
   - postgresql@9.6
   - python@2
@@ -100,7 +102,7 @@ homebrew_packages:
   - wget
 
 homebrew_casks:
-  - 1password
+  #- 1password
   - adium
   - anki
   - docker
@@ -108,7 +110,6 @@ homebrew_casks:
   #- firefox
   - flycut
   #- google-chrome
-  - gpg
   - gpg-suite
   - iterm2
   - omnigraffle
