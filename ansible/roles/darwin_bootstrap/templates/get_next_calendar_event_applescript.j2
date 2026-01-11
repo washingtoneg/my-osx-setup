@@ -1,0 +1,35 @@
+#!/opt/homebrew/bin/bash
+# Get next calendar event using AppleScript (works from tmux/background processes)
+
+osascript << 'EOF' 2>/dev/null
+tell application "Calendar"
+    set now to current date
+    set futureEnd to now + (2 * days)
+    
+    set nextEvent to missing value
+    set earliestTime to futureEnd
+    
+    repeat with cal in calendars
+        try
+            set calEvents to (events of cal whose start date ≥ now and start date < futureEnd)
+            repeat with evt in calEvents
+                set evtStart to start date of evt
+                if evtStart < earliestTime then
+                    set earliestTime to evtStart
+                    set nextEvent to evt
+                end if
+            end repeat
+        end try
+    end repeat
+    
+    if nextEvent is not missing value then
+        set evtStart to start date of nextEvent
+        set evtTime to time string of evtStart
+        set evtSummary to summary of nextEvent
+        -- Format similar to icalBuddy: "3:00 PM Event Name"
+        return evtTime & " " & evtSummary
+    else
+        return ""
+    end if
+end tell
+EOF

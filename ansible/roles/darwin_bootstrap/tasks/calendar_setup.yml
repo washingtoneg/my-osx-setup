@@ -1,0 +1,39 @@
+---
+
+- name: Create ~/bin directory
+  file:
+    path: ~/bin
+    state: directory
+    mode: '0755'
+  tags: calendar
+
+- name: Deploy calendar event script
+  template:
+    src: get_next_calendar_event_applescript.j2
+    dest: ~/bin/get_next_calendar_event
+    mode: '0755'
+  tags: calendar
+
+- name: Deploy LaunchAgent for calendar updates
+  template:
+    src: com.calendar.nextEvent.plist.j2
+    dest: ~/Library/LaunchAgents/com.calendar.nextEvent.plist
+    mode: '0644'
+  tags: calendar
+
+- name: Load LaunchAgent
+  command: launchctl load -w ~/Library/LaunchAgents/com.calendar.nextEvent.plist
+  args:
+    creates: ~/.calendar_next_event
+  tags: calendar
+
+- name: Test calendar script immediately
+  command: ~/bin/get_next_calendar_event
+  register: calendar_test
+  changed_when: false
+  tags: calendar
+
+- name: Display calendar test result
+  debug:
+    msg: "Calendar event: {{ calendar_test.stdout | default('No events found') }}"
+  tags: calendar

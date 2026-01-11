@@ -147,6 +147,10 @@
     - rbenv
     - ruby
 
+- name: Include calendar setup tasks
+  include_tasks: calendar_setup.yml
+  tags: calendar
+
 - name: Include dock-related tasks
   include_tasks: dock_setup.yml
   tags: dock
