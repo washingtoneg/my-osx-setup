@@ -1,9 +1,19 @@
 ---
 
+- name: Check if ruby is installed
+  command: ruby --version
+  register: installed_ruby_version
+  changed_when: installed_ruby_version.rc != 0
+  ignore_errors: true
+  tags:
+    - ruby
+
+# Only install ruby if it's missing
 - name: Install Ruby v{{ ruby_version }} with rbenv
   shell: |
     eval "$(rbenv init -)"
     rbenv install {{ ruby_version }}
+  when: installed_ruby_version.rc != 0
   tags:
     - rbenv
     - ruby

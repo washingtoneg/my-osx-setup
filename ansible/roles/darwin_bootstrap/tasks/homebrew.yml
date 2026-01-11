@@ -1,14 +1,14 @@
 ---
 
 - name: Install Homebrew taps
-  homebrew_tap:
+  community.general.homebrew_tap:
     name: "{{ item }}"
     state: present
   with_items: "{{ homebrew_taps }}"
   tags: homebrew
 
 - name: Install Homebrew casks
-  homebrew_cask:
+  community.general.homebrew_cask:
     name: "{{ item }}"
     state: present
     update_homebrew: yes
@@ -19,7 +19,7 @@
     - docker
 
 - name: Install Homebrew packages
-  homebrew:
+  community.general.homebrew:
     name: "{{ homebrew_packages }}"
     state: present
     update_homebrew: yes

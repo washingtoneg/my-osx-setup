@@ -16,5 +16,6 @@
     src: "~/scratch/dotfiles/{{ item }}"
     dest: "~/{{ item }}"
     state: link
+    force: yes
   with_items: "{{ dotfiles.stdout.splitlines() }}"
   tags: shell

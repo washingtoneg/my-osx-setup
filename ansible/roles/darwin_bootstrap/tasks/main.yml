@@ -32,13 +32,13 @@
     - git
     - ssh
 
-- name: Include shell configuration tasks
-  include_tasks: shell_config.yml
-  tags: shell
-
 - name: Include git-related tasks
   include_tasks: git.yml
   tags: git
+
+- name: Include shell configuration tasks
+  include_tasks: shell_config.yml
+  tags: shell
 
 - name: Check if xcode is installed
   command: gcc
@@ -61,36 +61,71 @@
     - pip
     - ruby
 
+- name: Find Python user bin directory
+  shell: python3 -c "import site; print(site.USER_BASE + '/bin')"
+  register: python_user_bin
+  changed_when: false
+  tags: awscli
+
+- name: Add Python user bin to PATH
+  set_fact:
+    ansible_env: "{{ ansible_env | combine({'PATH': python_user_bin.stdout + ':' + ansible_env.PATH}) }}"
+  tags: awscli
+
 - name: Check if pip is installed
-  command: pip --version
+  command: pip3 --version
   register: installed_pip_version
   changed_when: installed_pip_version.rc != 0
   ignore_errors: true
   tags:
-    - awscli
     - pip
 
-- name: Include pip install tasks if needed
-  include_tasks: pip_install.yml
+# Only install pip if it's missing
+- name: Download pip package
+  get_url:
+    url: "{{ pip.pkg_location }}"
+    dest: /tmp/get-pip.py
+    mode: 0755
   when: installed_pip_version.rc != 0
+  tags: pip
+
+- name: Remove pip installation file
+  file:
+    path: /tmp/get-pip.py
+    state: absent
+  tags: pip
+
+# Always install pip packages
+- name: Install setuptools (required by Ansible pip module)
+  command: pip3 install --user --break-system-packages setuptools
   tags:
     - awscli
     - pip
 
-- name: Include AWS CLI configuration tasks
-  include_tasks: awscli_config.yml
-  tags: awscli
-
-- name: Include Docker configuration tasks
-  include_tasks: docker_config.yml
-  tags: docker
-
-- name: Install gcalcli via pip for root
+- name: Install pip packages
   pip:
-    name: gcalcli
+    name: "{{ pip.packages }}"
     state: latest
-  become: true
-  tags: gcalcli
+    executable: pip3
+    extra_args: --user --break-system-packages
+  tags:
+    - awscli
+    - pip
+
+# - name: Include AWS CLI configuration tasks
+#   include_tasks: awscli_config.yml
+#   tags: awscli
+
+# - name: Include Docker configuration tasks
+#   include_tasks: docker_config.yml
+#   tags: docker
+
+# - name: Install gcalcli via pip for root
+#   pip:
+#     name: gcalcli
+#     state: latest
+#   become: true
+#   tags: gcalcli
 
 - name: Download packages
   get_url:
@@ -113,9 +148,9 @@
     - ruby
 
 - name: Include dock-related tasks
-  include: dock_setup.yml
+  include_tasks: dock_setup.yml
   tags: dock
 
 - name: Include gcalcli-related tasks
-  include: gcalcli.yml
+  include_tasks: gcalcli.yml
   tags: gcalcli

@@ -9,12 +9,18 @@ export USE_CLEAN_TERM="${USE_CLEAN_TERM:-false}"
 
 # Text colors
 
-export RED=$(tput setaf 1)
-export GREEN=$(tput setaf 2)
-export YELLOW=$(tput setaf 3)
-export CYAN=$(tput setaf 6)
-export WHITE=$(tput setaf 7)
-export VISIBLE=$(tput cnorm)
+# export RED=$(tput setaf 1)
+# export GREEN=$(tput setaf 2)
+# export YELLOW=$(tput setaf 3)
+# export CYAN=$(tput setaf 6)
+# export WHITE=$(tput setaf 7)
+# export VISIBLE=$(tput cnorm)
+export RED=$(tput -T xterm setaf 1)
+export GREEN=$(tput -T xterm setaf 2)
+export YELLOW=$(tput -T xterm setaf 3)
+export CYAN=$(tput -T xterm setaf 6)
+export WHITE=$(tput -T xterm setaf 7)
+export VISIBLE=$(tput -T xterm cnorm)
 
 # End color escape sequence
 export END="\033[0m"

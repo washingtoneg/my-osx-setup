@@ -2,9 +2,9 @@
 
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
-export PATH=/usr/local/opt/python/libexec/bin:$PATH
+export PATH={{ ansible_env.HOME }}/Library/Python/{{ python_version_major_minor }}/bin:{{ lookup('env', 'HOMEBREW_PREFIX') | default('/opt/homebrew', true) }}/bin:$PATH
 
-/usr/local/bin/gcalcli \
+{{ ansible_env.HOME }}/.local/bin/gcalcli \
   --calendar {{ ansible_env.GCALCLI_CALENDAR_USER }} \
   --nocache \
   agenda  \

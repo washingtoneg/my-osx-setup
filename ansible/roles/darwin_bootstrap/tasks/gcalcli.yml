@@ -3,7 +3,7 @@
 
 - name: Set up gcalcli
   shell: >
-    python setup.py install
+    python3 setup.py install
   args:
     chdir: "~/scratch/gcalcli"
   ignore_errors: true
@@ -12,7 +12,7 @@
 - name: Symlink gcalcli
   file:
     src: "~/scratch/gcalcli/gcalcli/cli.py"
-    dest: /usr/local/bin/gcalcli
+    dest: "{{ ansible_env.HOME }}/.local/bin/gcalcli"
     force: yes
     state: link
   tags: gcalcli

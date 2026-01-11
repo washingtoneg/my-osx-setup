@@ -1,5 +1,9 @@
 ---
 
+# Python version configuration - single source of truth
+python_version: "3.13"
+python_version_major_minor: "3.13"  # Used for path construction
+
 archives_to_download:
   - name: scrollreverser
     source: https://pilotmoon.com/downloads/ScrollReverser-1.7.6.zip
@@ -27,14 +31,12 @@ docker:
 dockitems_to_remove:
   - Adium
   - App Store
+  - Aps
   - Calendar
   - Contacts
   - FaceTime
   - Keynote
-  - Launchpad
-  - Mail
   - Maps
-  - Messages
   - Notes
   - Numbers
   - Pages
@@ -47,10 +49,10 @@ dockitems_to_remove:
 
 dockitems_to_persist:
   - name: Google Chrome
-    path: "/Applications/Google Chrome.app"
+    path: /Applications/Google Chrome.app
     pos: 1
-  - name: Firefox
-    path: "/Applications/Firefox.app"
+  - name: DuckDuckGo
+    path: /Applications/DuckDuckGo.app
     pos: 2
   - name: Messages
     path: /Applications/Messages.app
@@ -76,6 +78,7 @@ homebrew_packages:
   - dockutil
   - fortune
   - freetype
+  - fzf
   - git
   - git-lfs
   - gnu-tar
@@ -84,14 +87,14 @@ homebrew_packages:
   - jid
   - jo
   - jq
-  - postgresql@9.6
-  - python@2
+  - postgresql@16  # Updated from 9.6 which is EOL
+  - python@{{ python_version }}
   - rbenv
   - reattach-to-user-namespace
   - shellcheck
   - shpotify
   - sl
-  - sshrc
+  #- sshrc  # Deprecated - no longer available in Homebrew
   - telnet
   - terminal-notifier
   - terminal-parrot
@@ -102,18 +105,21 @@ homebrew_packages:
   - wget
 
 homebrew_casks:
-  #- 1password
+  - 1password
   - adium
   - anki
+  - cursor
   - docker
   - dropbox
+  - duckduckgo
   #- firefox
   - flycut
-  #- google-chrome
+  - google-chrome
   - gpg-suite
   - iterm2
   - omnigraffle
-  #- slack
+  - slack
+  - sigmaos
   - spotify
   - tunnelblick
   - typora
@@ -129,25 +135,25 @@ git_repos:
     name: my-osx-setup
     url: https://github.com/washingtoneg/my-osx-setup.git
     dest: ~/scratch/my-osx-setup
-    version: master
+    version: main
     force: no
   -
     name: dotfiles
     url: https://github.com/washingtoneg/dotfiles.git
     dest: ~/scratch/dotfiles
-    version: master
+    version: main
     force: no
   -
     name: amazon-vpc-cni-k8s
     url: https://github.com/aws/amazon-vpc-cni-k8s.git
     dest: ~/scratch/amazon-vpc-cni-k8s
-    version: master
+    version: main
     force: yes
   -
     name: gcalcli
     url: https://github.com/insanum/gcalcli.git
     dest: ~/scratch/gcalcli
-    version: master
+    version: main
     force: yes
   -
     name: go-jira
@@ -159,19 +165,19 @@ git_repos:
     name: kops
     url: https://github.com/kubernetes/kops.git
     dest: ~/scratch/kops
-    version: master
+    version: main
     force: yes
   -
     name: origami
     url: https://github.com/robbykraft/Origami.git
     dest: ~/scratch/origami
-    version: master
+    version: main
     force: yes
   -
     name: system-design-primer
     url: https://github.com/donnemartin/system-design-primer
     dest: ~/scratch/system-design-primer
-    version: master
+    version: main
     force: yes
   -
     name: tpm
@@ -186,8 +192,9 @@ packages_to_download:
     destination: ~/.vim/syntax
 
 pip:
-  # Use Homebrew's pip install location
-  executable: /usr/local/opt/python/libexec/bin/pip
+  # Architecture-aware pip location
+  # This will be set dynamically based on architecture
+  executable: "{{ ansible_env.HOME }}/Library/Python/{{ python_version_major_minor }}/bin/pip3"
   packages:
     - ansible-lint
     - awscli
@@ -210,6 +217,6 @@ ruby_gems:
   - thor
   - tmuxinator
 
-ruby_version: 2.6.1
+ruby_version: 3.2.2  # Updated from 2.6.1
 ssh_private_key: ~/.ssh/id_rsa
 ssh_public_key: ~/.ssh/id_rsa.pub
