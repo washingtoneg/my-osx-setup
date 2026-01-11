@@ -1,18 +1,25 @@
 ---
 # gcalcli-related tasks file for darwin_bootstrap
 
+- name: Create .local/bin directory for gcalcli
+  file:
+    path: "{{ ansible_facts.env.HOME }}/.local/bin"
+    state: directory
+    mode: '0755'
+  tags: gcalcli
+
 - name: Set up gcalcli
   shell: >
     python3 setup.py install
   args:
-    chdir: "~/scratch/gcalcli"
+    chdir: "{{ ansible_facts.env.HOME }}/scratch/gcalcli"
   ignore_errors: true
   tags: gcalcli
 
 - name: Symlink gcalcli
   file:
-    src: "~/scratch/gcalcli/gcalcli/cli.py"
-    dest: "{{ ansible_env.HOME }}/.local/bin/gcalcli"
+    src: "{{ ansible_facts.env.HOME }}/scratch/gcalcli/gcalcli/cli.py"
+    dest: "{{ ansible_facts.env.HOME }}/.local/bin/gcalcli"
     force: yes
     state: link
   tags: gcalcli
