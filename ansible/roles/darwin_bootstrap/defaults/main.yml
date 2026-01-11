@@ -1,8 +1,9 @@
 ---
 
-# Python version configuration - single source of truth
-python_version: "3.13"
-python_version_major_minor: "3.13"  # Used for path construction
+# Python version configuration - dynamically detected at runtime
+# Note: python_version_major_minor is set dynamically in tasks/main.yml
+python_version: "3.13"  # Homebrew package version to install
+python_version_major_minor: "{{ ansible_python_version | regex_replace('^([0-9]+\\.[0-9]+).*', '\\1') }}"  # Actual installed version
 
 # Removed archives_to_download - these should be installed via Homebrew casks instead
 # to avoid permission issues and stay up-to-date

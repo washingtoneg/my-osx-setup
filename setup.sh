@@ -67,6 +67,14 @@ install_ansible_dependencies() {
   # Ensure Ansible is in PATH - detect actual Python version
   PYTHON_VERSION=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
   export PATH="$HOME/Library/Python/${PYTHON_VERSION}/bin:$PATH"
+  
+  # Add Python user bin to bash profile for persistent PATH
+  if ! grep -q "Library/Python/${PYTHON_VERSION}/bin" ~/.bash_profile 2>/dev/null; then
+    info "Adding Python user bin to ~/.bash_profile"
+    echo "" >> ~/.bash_profile
+    echo "# Python user packages" >> ~/.bash_profile
+    echo "export PATH=\"\$HOME/Library/Python/${PYTHON_VERSION}/bin:\$PATH\"" >> ~/.bash_profile
+  fi
 
   # Install Ansible Galaxy collections
   info "Installing Ansible Galaxy collections..."
@@ -82,13 +90,9 @@ install_homebrew() {
     # Add Homebrew to PATH for this session
     eval "$($HOMEBREW_PREFIX/bin/brew shellenv)"
     
-    # Add to shell profile for future sessions
-    if [[ "$SHELL" == */zsh ]]; then
-      echo "eval \"\$($HOMEBREW_PREFIX/bin/brew shellenv)\"" >> ~/.zshrc
-    elif [[ "$SHELL" == */bash ]]; then
-      # Add to both profile files for bash
+    # Add to bash profile for future sessions
+    if ! grep -q "brew shellenv" ~/.bash_profile 2>/dev/null; then
       echo "eval \"\$($HOMEBREW_PREFIX/bin/brew shellenv)\"" >> ~/.bash_profile
-      echo "eval \"\$($HOMEBREW_PREFIX/bin/brew shellenv)\"" >> ~/.bashrc
     fi
   else
     info 'Homebrew already installed.'
@@ -126,6 +130,8 @@ run_ansible() {
   # Ensure Ansible is in PATH - detect actual Python version
   PYTHON_VERSION=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
   export PATH="$HOME/Library/Python/${PYTHON_VERSION}/bin:$PATH"
+  
+  info "Using Python ${PYTHON_VERSION} - packages in ~/Library/Python/${PYTHON_VERSION}/bin"
   
   pushd "${DIRECTORY}/ansible" &>/dev/null
     ANSIBLE_CONFIG=ansible.cfg ANSIBLE_LOG_PATH=$LOG_FILE ansible-playbook playbooks/darwin_bootstrap.yml -v --ask-become-pass

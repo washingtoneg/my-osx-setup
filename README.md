@@ -89,9 +89,11 @@ flowchart TD
     InstallHomebrew --> InstallPython[Install Python 3.13]
     InstallPython --> DetectPyVersion[Detect Python Version Dynamically]
     DetectPyVersion --> SetPath[Set PATH with Python user bin]
-    SetPath --> InstallAnsible[Install Ansible via pip3]
+    SetPath --> AddPathToProfile[Add Python bin to ~/.bash_profile]
+    AddPathToProfile --> InstallAnsible[Install Ansible via pip3]
     InstallAnsible --> InstallCollections[Install Ansible Galaxy Collections]
-    InstallCollections --> RunAnsible[Run Ansible Playbook]
+    InstallCollections --> ChangeToBash[Change default shell to bash]
+    ChangeToBash --> RunAnsible[Run Ansible Playbook]
     RunAnsible --> AnsibleTasks[Ansible Tasks]
     
     AnsibleTasks --> HomebrewPackages[Install Homebrew Packages]
@@ -118,9 +120,11 @@ flowchart TD
 5. **Install Homebrew**
 6. **Install Python 3.13**
 7. **Dynamically detect Python version** and update PATH
-8. **Install Ansible** via pip3
-9. **Install Ansible Galaxy collections**
-10. **Run Ansible playbook** which provisions:
+8. **Add Python user bin to ~/.bash_profile** for persistence
+9. **Install Ansible** via pip3
+10. **Install Ansible Galaxy collections**
+11. **Change default shell to bash** (if currently zsh)
+12. **Run Ansible playbook** which provisions:
     - Homebrew taps, casks, and packages
     - Python packages via pip
     - Ruby gems via rbenv
