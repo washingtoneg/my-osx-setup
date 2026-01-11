@@ -4,13 +4,9 @@
 python_version: "3.13"
 python_version_major_minor: "3.13"  # Used for path construction
 
-archives_to_download:
-  - name: scrollreverser
-    source: https://pilotmoon.com/downloads/ScrollReverser-1.7.6.zip
-    destination: /Applications
-  - name: sizeup
-    source: http://www.irradiatedsoftware.com/download/SizeUp.zip
-    destination: /Applications
+# Removed archives_to_download - these should be installed via Homebrew casks instead
+# to avoid permission issues and stay up-to-date
+archives_to_download: []
 
 aws_credentials_file: ~/.aws/credentials
 aws_credentials_csv: ~/Downloads/accessKeys.csv
@@ -118,6 +114,7 @@ homebrew_casks:
   - gpg-suite
   - iterm2
   - omnigraffle
+  - scroll-reverser  # Added - was manually downloaded before
   - slack
   - sigmaos
   - spotify
@@ -125,6 +122,7 @@ homebrew_casks:
   - typora
   - vagrant
   #- virtualbox
+  #- sizeup  # Not available as cask - window management, use Rectangle instead
 
 homebrew_taps:
   - bazelbuild/tap
