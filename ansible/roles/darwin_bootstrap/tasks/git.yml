@@ -13,6 +13,22 @@
     - git
     #- skip_ansible_lint
 
+- name: Convert HTTPS git remotes to SSH for GitHub repos
+  shell: |
+    cd {{ item.dest }}
+    current_url=$(git remote get-url origin 2>/dev/null || echo "")
+    if [[ "$current_url" == https://github.com/* ]]; then
+      ssh_url=$(echo "$current_url" | sed 's|https://github.com/|git@github.com:|')
+      git remote set-url origin "$ssh_url"
+      echo "converted"
+    else
+      echo "skipped"
+    fi
+  register: git_remote_converted
+  changed_when: git_remote_converted.stdout == "converted"
+  with_items: "{{ git_repos }}"
+  tags: git
+
 - name: Git config - Do not allow git push without additional commands
   git_config:
     name: push.default
