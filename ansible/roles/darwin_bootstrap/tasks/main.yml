@@ -150,7 +150,3 @@
 - name: Include dock-related tasks
   include_tasks: dock_setup.yml
   tags: dock
-
-- name: Include gcalcli-related tasks
-  include_tasks: gcalcli.yml
-  tags: gcalcli

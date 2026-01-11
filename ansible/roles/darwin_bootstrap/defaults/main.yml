@@ -79,6 +79,7 @@ homebrew_packages:
   - git-lfs
   - gnu-tar
   - hub
+  - ical-buddy  # For calendar integration in tmux
   - imagemagick
   - jid
   - jo
@@ -148,12 +149,6 @@ git_repos:
     version: main
     force: yes
   -
-    name: gcalcli
-    url: https://github.com/insanum/gcalcli.git
-    dest: ~/scratch/gcalcli
-    version: main
-    force: yes
-  -
     name: go-jira
     url: https://github.com/Netflix-Skunkworks/go-jira.git
     dest: ~/scratch/go-jira
@@ -197,7 +192,6 @@ pip:
     - ansible-lint
     - awscli
     - markdown-editor
-    - gcalcli
     - ipdb
     - virtualenvwrapper
   pkg_location: https://bootstrap.pypa.io/get-pip.py
