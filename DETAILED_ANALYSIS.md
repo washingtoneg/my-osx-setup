@@ -13,7 +13,7 @@ I've analyzed your entire repository and identified **14 critical issues** that 
 1. **Homebrew Installation URL is Deprecated**
    - **File**: `setup.sh` line 8
    - **Issue**: Uses old Ruby-based install URL
-   - **Current**: `https://raw.githubusercontent.com/Homebrew/install/master/install`
+   - **Current**: `https://raw.githubusercontent.com/Homebrew/install/HEAD/install`
    - **Fix**: `https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh`
    - **Impact**: Installation will fail with ruby error
 

@@ -8,10 +8,10 @@
 # 3. After setup completes, guides you through SSH key setup
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/washingtoneg/my-osx-setup/master/bootstrap.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/washingtoneg/my-osx-setup/main/bootstrap.sh | bash
 #
 # Or download and inspect first:
-#   curl -fsSL https://raw.githubusercontent.com/washingtoneg/my-osx-setup/master/bootstrap.sh > bootstrap.sh
+#   curl -fsSL https://raw.githubusercontent.com/washingtoneg/my-osx-setup/main/bootstrap.sh > bootstrap.sh
 #   chmod +x bootstrap.sh
 #   ./bootstrap.sh
 
@@ -61,12 +61,12 @@ if git --version &>/dev/null; then
 else
   # Git not available yet, use curl to download
   echo "Git not found, downloading as ZIP..."
-  curl -fsSL https://github.com/washingtoneg/my-osx-setup/archive/refs/heads/master.zip -o repo.zip
+  curl -fsSL https://github.com/washingtoneg/my-osx-setup/archive/refs/heads/main.zip -o repo.zip
   
   # Check if unzip is available
   if command -v unzip &>/dev/null; then
     unzip -q repo.zip
-    cd my-osx-setup-master
+    cd my-osx-setup-main
   else
     echo -e "${RED}✗ Error: Neither git nor unzip is available${NC}"
     echo "Please install Xcode Command Line Tools first:"

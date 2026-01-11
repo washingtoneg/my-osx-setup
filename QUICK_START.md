@@ -138,7 +138,7 @@ The setup takes 30-60 minutes. Don't let your laptop die!
 
 ### Method 1: Bootstrap (Recommended for first time)
 ```bash
-curl -fsSL https://raw.githubusercontent.com/washingtoneg/my-osx-setup/master/bootstrap.sh | bash
+curl -fsSL https://raw.githubusercontent.com/washingtoneg/my-osx-setup/main/bootstrap.sh | bash
 ```
 
 ### Method 2: Manual
@@ -240,7 +240,7 @@ git commit -m "Fix Apple Silicon compatibility for 2026
 - Update deprecated packages (postgresql, ruby)
 - Add bootstrap.sh for easier setup"
 
-git push origin master
+git push origin main
 ```
 
 ---

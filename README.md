@@ -18,7 +18,7 @@ This repository provides a complete, end-to-end setup script for provisioning a 
 
 ```bash
 # Option 1: Bootstrap script (fully automated)
-curl -fsSL https://raw.githubusercontent.com/washingtoneg/my-osx-setup/master/bootstrap.sh | bash
+curl -fsSL https://raw.githubusercontent.com/washingtoneg/my-osx-setup/main/bootstrap.sh | bash
 
 # Option 2: Clone with HTTPS and run manually
 git clone https://github.com/washingtoneg/my-osx-setup.git
@@ -282,7 +282,7 @@ This repository was updated for Apple Silicon and modern macOS:
 ### Critical Fixes
 - ✅ Architecture detection (Apple Silicon vs Intel)
 - ✅ Homebrew path handling (`/opt/homebrew` vs `/usr/local`)
-- ✅ Updated Homebrew install URL (HEAD instead of master)
+- ✅ Updated Homebrew install URL (HEAD instead of legacy branch name)
 - ✅ Python 3.12 instead of Python 2 (EOL)
 - ✅ Ansible installed via pip3 (not Homebrew)
 - ✅ Ansible collections support (community.general)
