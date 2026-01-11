@@ -68,13 +68,8 @@ install_ansible_dependencies() {
   PYTHON_VERSION=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
   export PATH="$HOME/Library/Python/${PYTHON_VERSION}/bin:$PATH"
   
-  # Add Python user bin to bash profile for persistent PATH
-  if ! grep -q "Library/Python/${PYTHON_VERSION}/bin" ~/.bash_profile 2>/dev/null; then
-    info "Adding Python user bin to ~/.bash_profile"
-    echo "" >> ~/.bash_profile
-    echo "# Python user packages" >> ~/.bash_profile
-    echo "export PATH=\"\$HOME/Library/Python/${PYTHON_VERSION}/bin:\$PATH\"" >> ~/.bash_profile
-  fi
+  info "Python ${PYTHON_VERSION} user packages will be in PATH"
+  info "Note: Persistent PATH config is in dotfiles/.bashrc"
 
   # Install Ansible Galaxy collections
   info "Installing Ansible Galaxy collections..."
