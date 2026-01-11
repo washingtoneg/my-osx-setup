@@ -1,5 +1,29 @@
 ---
 
+- name: Check if Homebrew bash is in /etc/shells
+  command: grep -Fxq "/opt/homebrew/bin/bash" /etc/shells
+  register: bash_in_shells
+  failed_when: false
+  changed_when: false
+  tags: shell
+
+- name: Add Homebrew bash to /etc/shells
+  become: yes
+  shell: echo "/opt/homebrew/bin/bash" >> /etc/shells
+  when: bash_in_shells.rc != 0
+  tags: shell
+
+- name: Get current username
+  command: whoami
+  register: current_user
+  changed_when: false
+  tags: shell
+
+- name: Change default shell to Homebrew bash
+  become: yes
+  command: chsh -s /opt/homebrew/bin/bash {{ current_user.stdout }}
+  tags: shell
+
 - name: Get list of dotfiles
   shell: ls -d .[a-zA-Z]* | grep -v .gitignore | grep -v .git$
   register: dotfiles

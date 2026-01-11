@@ -67,6 +67,7 @@ dockitems_to_persist:
 homebrew_packages:
   - ack
   - asciinema
+  - bash  # Modern bash (5.x) - macOS ships with ancient 3.2
   - bash-completion
   - bash-git-prompt
   - bazel

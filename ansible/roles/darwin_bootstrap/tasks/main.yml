@@ -36,10 +36,6 @@
   include_tasks: git.yml
   tags: git
 
-- name: Include shell configuration tasks
-  include_tasks: shell_config.yml
-  tags: shell
-
 - name: Check if xcode is installed
   command: gcc
   register: gcc_error
@@ -60,6 +56,10 @@
     - homebrew
     - pip
     - ruby
+
+- name: Include shell configuration tasks
+  include_tasks: shell_config.yml
+  tags: shell
 
 - name: Find Python user bin directory
   shell: python3 -c "import site; print(site.USER_BASE + '/bin')"
