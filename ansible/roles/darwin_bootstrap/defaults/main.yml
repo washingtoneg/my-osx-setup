@@ -72,7 +72,7 @@ homebrew_packages:
   - asciinema
   - bash-completion
   - bash-git-prompt
-  - bazelbuild/tap/bazel
+  - bazel
   - cmake
   - docker
   - dockutil
