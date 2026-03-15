@@ -107,6 +107,7 @@ homebrew_casks:
   - 1password
   - adium
   - anki
+  - claude
   - cursor
   - docker
   - dropbox
