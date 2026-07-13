@@ -1,0 +1,60 @@
+---
+
+- name: Install pipx via Homebrew
+  community.general.homebrew:
+    name: pipx
+    state: present
+    update_homebrew: yes
+  tags: certbot
+
+- name: Remove Homebrew certbot if present (pipx version is used instead)
+  community.general.homebrew:
+    name: certbot
+    state: absent
+  tags: certbot
+
+- name: Add ~/.local/bin to PATH via pipx ensurepath
+  command: pipx ensurepath
+  register: pipx_ensurepath
+  changed_when: "'already' not in pipx_ensurepath.stdout"
+  tags: certbot
+
+- name: Install certbot via pipx (using Python 3.13)
+  command: pipx install --python /opt/homebrew/bin/python3.13 certbot
+  register: pipx_certbot
+  changed_when: "'installed package' in pipx_certbot.stdout"
+  failed_when: pipx_certbot.rc != 0 and 'already installed' not in pipx_certbot.stdout
+  environment:
+    PIPX_DEFAULT_PYTHON: /opt/homebrew/bin/python3.13
+  tags: certbot
+
+- name: Install certbot-dns-godaddy plugin via pipx inject
+  command: pipx inject certbot certbot-dns-godaddy
+  register: pipx_inject
+  changed_when: "'injected package' in pipx_inject.stdout"
+  failed_when: pipx_inject.rc != 0 and 'already installed' not in pipx_inject.stdout
+  tags: certbot
+
+- name: Prompt for GoDaddy API key
+  pause:
+    prompt: "GoDaddy API key (from developer.godaddy.com)"
+  register: godaddy_api_key
+  no_log: true
+  tags: certbot
+
+- name: Prompt for GoDaddy API secret
+  pause:
+    prompt: "GoDaddy API secret"
+  register: godaddy_api_secret
+  no_log: true
+  tags: certbot
+
+- name: Write certbot GoDaddy credentials file
+  copy:
+    dest: "~/.secrets/certbot/godaddy.ini"
+    mode: "0600"
+    content: |
+      dns_godaddy_key = {{ godaddy_api_key.user_input }}
+      dns_godaddy_secret = {{ godaddy_api_secret.user_input }}
+  no_log: true
+  tags: certbot

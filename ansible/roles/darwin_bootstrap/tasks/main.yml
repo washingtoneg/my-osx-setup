@@ -141,6 +141,10 @@
   with_items: "{{ archives_to_download }}"
   notify: start installed applications
 
+- name: Include certbot setup tasks
+  include_tasks: certbot_setup.yml
+  tags: certbot
+
 - name: Include rbenv/ruby tasks
   include_tasks: rbenv_and_ruby_install.yml
   tags:

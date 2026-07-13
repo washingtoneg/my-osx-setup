@@ -19,6 +19,7 @@ directories:
   - ~/.tmux/plugins/tpm
   - ~/.vim/pack/tml/start/tcomment
   - ~/.vim/syntax
+  - ~/.secrets/certbot
 
 docker:
   settings_file: '~/Library/Group\ Containers/group.com.docker/settings.json'
@@ -71,6 +72,7 @@ homebrew_packages:
   - bash-completion
   - bash-git-prompt
   - bazel
+  - certbot
   - cmake
   - docker
   - dockutil
