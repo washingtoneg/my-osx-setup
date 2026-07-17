@@ -98,9 +98,10 @@ homebrew_packages:
   #- sshrc  # Deprecated - no longer available in Homebrew
   - telnet
   - terminal-notifier
-  - terminal-parrot
+  #- terminal-parrot  # jmhobbs/parrot tap is now untrusted by Homebrew, blocking installs
   - tmux
   - tree
+  - uv
   - vim
   - watch
   - wget
