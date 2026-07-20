@@ -88,6 +88,7 @@ homebrew_packages:
   - jid
   - jo
   - jq
+  - pnpm
   - postgresql@16  # Updated from 9.6 which is EOL
   - python@{{ python_version }}
   - rbenv
